@@ -1,0 +1,24 @@
+{% extends '_base.html' %}
+
+{% block content %}
+<form class="form-horizontal" enctype=multipart/form-data role="form" method="post" action="/post_expense">
+    <div class="container">
+        <div class="row">
+            <input type="hidden" name="count" value="1" />
+            {{ form.csrf_token }}
+
+            {{ form.name(placeholder="Expense Name", id="expense_1")  }}
+            {{ form.cost(placeholder="Cost", id="cost_1") }}
+            {{ form.month (id="month_1") }}
+            {{ form.year(placeholder="Year", id="year_1") }}
+            <button id="b1" class="btn btn-info add-more" type="button">+</button>
+            <!--<input type="hidden" name="count" class="count" value="1" />-->
+            <small>Press + to add another set of fields.</small>
+            <br>
+            <button class="btn btn-sm btn-success" type="submit">Post Expense</button>
+        </div>
+    </div>
+
+</form>
+
+{% endblock %}
