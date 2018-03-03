@@ -1,24 +1,54 @@
 {% extends '_base.html' %}
 
 {% block content %}
-<form class="form-horizontal" enctype=multipart/form-data role="form" method="post" action="/post_expense">
-    <div class="container">
-        <div class="row">
-            <input type="hidden" name="count" value="1" />
+<!--<div class="container">-->
+<div class="row">
+    <div class="col-lg-6">
+        <form class="form-horizontal" enctype=multipart/form-data role="form" method="post" action="/">
+            <input type="hidden" name="count" value="1"/>
             {{ form.csrf_token }}
 
-            {{ form.name(placeholder="Expense Name", id="expense_1")  }}
-            {{ form.cost(placeholder="Cost", id="cost_1") }}
+            {{ form.expense_name(placeholder="Expense Name", id="expense_1", value="") }}
+            {{ form.cost(placeholder="Cost", id="cost_1", class="cost", value="") }}
             {{ form.month (id="month_1") }}
             {{ form.year(placeholder="Year", id="year_1") }}
+            {{ form.type(placeholder="Type", id="type_1") }}
             <button id="b1" class="btn btn-info add-more" type="button">+</button>
             <!--<input type="hidden" name="count" class="count" value="1" />-->
             <small>Press + to add another set of fields.</small>
             <br>
+            <hr>
+            <div class="totals">
+                <h3>TOTALS</h3>
+                <table>
+                    <tr>
+                        <td><strong>Mutual Total</strong></td>
+                        <td class="amount mutual"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Per Person Total</strong></td>
+                        <td class="amount perperson"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Personal Paycheck #1</strong></td>
+                        <td class="amount paycheck1"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Personal Paycheck #2</strong></td>
+                        <td class="amount paycheck2"></td>
+                    </tr>
+                </table>
+            </div>
             <button class="btn btn-sm btn-success" type="submit">Post Expense</button>
-        </div>
+        </form>
     </div>
+    <div class="col-lg-6">
+        <h3>Historical Graph goes here !!!</h3>
+    </div>
+</div>
 
-</form>
+<script>
+
+</script>
 
 {% endblock %}

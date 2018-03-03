@@ -6,7 +6,7 @@ import time
 
 
 class ExpensesForm(FlaskForm):
-    name = StringField('Expense Item', validators=[DataRequired()])
+    expense_name = StringField('Expense_Item', validators=[DataRequired()])
     cost = FloatField('Cost', validators=[DataRequired()])
     year = StringField('Year', validators=[DataRequired()], default=time.strftime("%Y"))
     month = SelectField('Month', choices=[('Jan', 'January'),
@@ -22,3 +22,7 @@ class ExpensesForm(FlaskForm):
                                           ('Nov', 'November'),
                                           ('Dec', 'December')
                                           ], validators=[DataRequired()])
+    type = SelectField('Role', choices=[('mutual', 'Mutual'),
+                                        ('personal#1', 'Personal #1'),
+                                        ('personal#2', 'Personal #2')
+                                        ])

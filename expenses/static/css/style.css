@@ -1,0 +1,48 @@
+html, body{
+    height: 100%;
+    width: 100%;
+}
+
+input, select{
+     box-shadow: #aeaeae 0px 2px 8px;
+     height: 35px;
+     border-radius: 10px;
+     margin: 10px;
+     padding: 0;
+}
+input:focus, select:focus{
+    outline: none;
+}
+[id^='year']{
+    width: 50px;
+}
+.btn-success{
+    margin-left: 10px;
+    margin-top: 25px;
+}
+.year{
+    margin-left: 15px;
+}
+
+.totals{
+    margin-left: 10px;
+}
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+table .amount{
+    font-weight: bold;
+}
