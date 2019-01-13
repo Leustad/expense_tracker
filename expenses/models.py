@@ -1,3 +1,5 @@
+from flask_login import UserMixin
+
 from expenses import db, ma
 
 
@@ -24,3 +26,13 @@ class Expenses(db.Model):
 class ExpensesSchema(ma.ModelSchema):
     class Meta:
         model = Expenses
+
+
+class User(UserMixin, db.Model):
+    __tabelname__ = 'expenses'
+    __table_args__ = {'schema': 'leustad'}
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    username = db.Column(db.String(50), unique=False)
+    email = db.Column(db.String(80), unique=True)
+    password = db.Column(db.String())
