@@ -4,21 +4,25 @@
 <!--<div class="container">-->
 <div class="row">
     <div class="col-lg-6">
-        <form class="form-horizontal" enctype=multipart/form-data role="form" method="post" action="/">
+        <form class="form-horizontal" id="main-form" enctype=multipart/form-data role="form" method="post" action="/">
             <input type="hidden" name="count" value="1"/>
             {{ form.csrf_token }}
+            {% for expense_item in form.items %}
+                {{ expense_item.expense(placeholder="Expense Name", id="expense_0", value="") }}
+                {{ expense_item.cost(placeholder="Cost", id="cost_0", class="cost", value="") }}
+                {{ expense_item.due_date(id="due_date_0") }}
+                {{ expense_item.desc(id="desc_0") }}
+            {% endfor %}
 
-            {{ form.expense_name(placeholder="Expense Name", id="expense_1", value="") }}
-            {{ form.cost(placeholder="Cost", id="cost_1", class="cost", value="") }}
-            {{ form.month (id="month_1") }}
-            {{ form.year(placeholder="Year", id="year_1") }}
-            {{ form.type(placeholder="Type", id="type_1") }}
-            <button id="b1" class="btn btn-info add-more" type="button">+</button>
+            <button id="del_row_0" class="btn btn-secondary delete-row" type="button">-</button>
+            <button class="btn btn-info add-more" type="button">+</button>
             <!--<input type="hidden" name="count" class="count" value="1" />-->
             <small>Press + to add another set of fields.</small>
-            <br>
+            <br id="br_0">
             <hr>
-            <div class="totals">
+            <button class="btn btn-sm btn-success" type="submit">Post Expense</button>
+        </form>
+                    <div class="totals">
                 <h3>TOTALS</h3>
                 <table>
                     <tr>
@@ -39,16 +43,14 @@
                     </tr>
                 </table>
             </div>
-            <button class="btn btn-sm btn-success" type="submit">Post Expense</button>
-        </form>
     </div>
     <div class="col-lg-6">
         <h3>Historical Graph goes here !!!</h3>
+        <canvas id="chart" width="600" height="400"></canvas>
     </div>
 </div>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
 <script>
-
 </script>
 
 {% endblock %}

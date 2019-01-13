@@ -1,38 +1,26 @@
 $(document).ready(function(){
-    var next = 1;
-    $(".add-more").click(function(e){
-        e.preventDefault();
-        var year = $('#year_' + next).val();
-        var addto = $("#type_" + next);
-        var prev_month = $("#month_" + next).val();
+    var next = 0;
+    $(".add-more").click(function(){
+        // e.preventDefault();
+        var addto = $("#desc_" + next);
 
         next = next + 1;
-        var newIn = '<br /><input id="expense_' + next + '" placeholder="Expense Name" + type="text" name="expense_name"> \
-                    <input id="cost_' + next + '" placeholder="Cost" class="cost" type="text" name="cost" value=""> \
-                    <select id="month_' + next + '" placeholder="Month"  type="text" name="month"> \
-                        <option value="Jan">January</option> \
-                        <option value="Feb">February</option > \
-                        <option value="Mar">March</option> \
-                        <option value="Apr">April</option> \
-                        <option value="May">May</option> \
-                        <option value="Jun">June</option> \
-                        <option value="Jul">July</option > \
-                        <option value="Aug">August</option> \
-                        <option value="Sep">September</option> \
-                        <option value="Oct">October</option> \
-                        <option value="Nov">November</option> \
-                        <option value="Dec">December</option> \
-                    <input class="year" id="year_' + next + '" placeholder="Year"  type="text" value="' + year + '" name="year"> \
-                    <select id="type_' + next + '" placeholder="Type"  type="text" name="type"> \
+        var today = new Date().toISOString().split('T')[0]
+        var newIn = '<br id=br_' + next + '><input id="expense_' + next + '" placeholder="Expense Name" type="text" name="items-' + next + '-expense"> \
+                    <input id="cost_' + next + '" placeholder="Cost" class="cost" type="text" name="items-' + next + '-cost" value=""> \
+                    <input id="due_date_' + next + '" type="date" name="items-' + next + '-due_date" value="2018-01-01"> \
+                    <select id="desc_' + next + '" type="text" name="items-' + next + '-desc"> \
                         <option value="mutual">Mutual</option> \
                         <option value="personal#1">Personal #1</option > \
-                        <option value="personal#2">Personal #2</option> \
-                    <input type="hidden" name="count" class="count" value="' + next + '">';
+                        <option value="personal#2">Personal #2</option>';
         var newInput = $(newIn);
         $(addto).after(newInput);
-        $('#month_' + next).val(prev_month);  // Sets the new value of the Month to the previous Month's value
-        $("#year_" + next).attr('data-source',$(addto).attr('data-source'));
 
+        var previous_row = next - 1;
+        $("#desc_" + previous_row).after('<button id="del_row_' + previous_row + '" class="btn btn-secondary delete-row" type="button">-</button>');
+        $('#due_date_' + next).val(today);
+
+        update_fields();
         function edit_totals(total){
             var mutual = $('.mutual');
             var perperson = $('.perperson');
@@ -50,28 +38,24 @@ $(document).ready(function(){
             var pay1 = 0;
             var pay2 = 0;
             var mutual = 0;
-            $("[id^=type]").each(function(){
+            $("[id^=desc]").each(function(){
                 val = $(this).val();
                 row_num = this.id.split("_")[1];
 
-                if ($("#cost_" + row_num).val().match(/^\d+$/)){
-
-                    if (val == "personal#2"){
-                        pay2 += parseFloat($("#cost_" + row_num).val());
-                    }
-                    else if (val == "personal#1"){
-                        pay1 += parseFloat($("#cost_" + row_num).val());
-                    }
-                    else if (val == "mutual"){
-                        mutual += parseFloat($("#cost_" + row_num).val());
-                    }
+                if (val == "personal#2"){
+                    pay2 += parseFloat($("#cost_" + row_num).val());
+                }
+                else if (val == "personal#1"){
+                    pay1 += parseFloat($("#cost_" + row_num).val());
+                }
+                else if (val == "mutual"){
+                    mutual += parseFloat($("#cost_" + row_num).val());
                 }
            });
            personals.push(pay1.toFixed(2), pay2.toFixed(2), mutual.toFixed(2));
-           console.log(personals);
            return personals
         }
-        $("select[name=type]").change(function(){
+        $("select[name=desc]").change(function(){
             totals = get_totals();
             edit_totals(totals);
         })
@@ -82,15 +66,34 @@ $(document).ready(function(){
         })
     });
 
-    $(function () {
-    $("[id^=cost]").keyup(function(){
-        if (!$(this).val().match(/^\d+$/)){
-              $(this).css({ 'background': '#AA453C' });
-            }
-            else{
-            $(this).css({ 'background': 'white' });
-            }
+    // Delete Selected Row and Re-index Fields
+    $('.delete-row').on('click', function(){
+        var fields = ['expense', 'cost', 'due_date', 'desc', 'del_row', 'br'];
+        var row = this.id.split('_')[2];
+        var prev_row = row - 1;
+        console.log(prev_row);
+        $.each(fields, function(idx, value){
+            $("[id^=" + value + '_' + row + "]").remove();
         });
+        $("[id^=br_" + prev_row + "]").remove();
+        update_fields();
     });
 
+    // Re-index All Fields
+    function update_fields(){
+        var fields = ['expense', 'cost', 'due_date', 'desc', 'del_row', 'br'];
+        $.each(fields, function(idx, value){
+            var ctr = 1;
+            $("[id^=" + value + "]").each(function(index, el){
+                $(this).attr('id', value + '_' + ctr);
+                ctr += 1;
+            });
+        });
+        update_del_btn();
+    }
+
+    function update_del_btn(){
+        $('.delete-row').off('click');
+        $('.delete-row').on('click', function(e){});
+    }
 });

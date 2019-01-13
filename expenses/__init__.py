@@ -2,6 +2,7 @@ import os
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_marshmallow import Marshmallow
 # from flask_admin import Admin
 # from flask_admin.contrib.sqla import ModelView
 from flask_bcrypt import Bcrypt
@@ -13,6 +14,8 @@ print('__APP_SETTINGS__: {}'.format(os.environ['APP_SETTINGS']))
 
 # bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
+ma = Marshmallow(app)
+
 
 # from pigeon.models import User, MessageBoard
 # from pigeon.admin.view import AdminView, AdminMessageBoard
