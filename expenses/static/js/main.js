@@ -3,6 +3,7 @@ $(document).ready(function(){
     $(".add-more").click(function(){
         // e.preventDefault();
         var addto = $("#desc_" + next);
+        console.log('before', next);
 
         next = next + 1;
         var today = new Date().toISOString().split('T')[0]
@@ -15,6 +16,7 @@ $(document).ready(function(){
                         <option value="personal#2">Personal #2</option>';
         var newInput = $(newIn);
         $(addto).after(newInput);
+        console.log('after', next);
 
         var previous_row = next - 1;
         $("#desc_" + previous_row).after('<button id="del_row_' + previous_row + '" class="btn btn-secondary delete-row" type="button">-</button>');
@@ -67,7 +69,7 @@ $(document).ready(function(){
     });
 
     // Delete Selected Row and Re-index Fields
-    $('.delete-row').on('click', function(){
+    $('form').on('click', '.delete-row', function(){
         var fields = ['expense', 'cost', 'due_date', 'desc', 'del_row', 'br'];
         var row = this.id.split('_')[2];
         var prev_row = row - 1;
@@ -75,7 +77,7 @@ $(document).ready(function(){
         $.each(fields, function(idx, value){
             $("[id^=" + value + '_' + row + "]").remove();
         });
-        $("[id^=br_" + prev_row + "]").remove();
+        // $("[id^=br_" + prev_row + "]").remove();
         update_fields();
     });
 
@@ -83,7 +85,7 @@ $(document).ready(function(){
     function update_fields(){
         var fields = ['expense', 'cost', 'due_date', 'desc', 'del_row', 'br'];
         $.each(fields, function(idx, value){
-            var ctr = 1;
+            var ctr = 0;
             $("[id^=" + value + "]").each(function(index, el){
                 $(this).attr('id', value + '_' + ctr);
                 ctr += 1;

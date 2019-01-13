@@ -23,7 +23,6 @@ def index():
                                  item['due_date'],
                                  item['desc'],
                                  )
-                print('asd', entry)
                 db.session.add(entry)
                 db.session.commit()
         return redirect(url_for('main.index'))
