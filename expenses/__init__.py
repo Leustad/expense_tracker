@@ -1,8 +1,10 @@
 import os
 
 from flask import Flask
+from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 # from flask_admin import Admin
 # from flask_admin.contrib.sqla import ModelView
 
@@ -11,9 +13,12 @@ app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 print('__APP_SETTINGS__: {}'.format(os.environ['APP_SETTINGS']))
 
-# bcrypt = Bcrypt(app)
+bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'main.login'
 
 
 # from pigeon.models import User, MessageBoard
