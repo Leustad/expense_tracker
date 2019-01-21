@@ -168,6 +168,15 @@ def update_template():
                            update_template_form=update_template_form)
 
 
+@main_blueprint.route('/get_template_fields', methods=['POST'])
+@login_required
+def get_fields():
+    template_name = request.json['template_name']
+    template_row = Template.query.filter_by(name=template_name,
+                                            user_id=session['user_id']).first()
+    return jsonify({'fields': template_row.template})
+
+
 def deselect_default():
     """ User wants this template to be default, so find the one is already "default" and
         make it NOT default """

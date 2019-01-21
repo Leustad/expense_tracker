@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block title %}
-    Create Tepmlate
+   | Templates
 {% endblock %}
 
 {% block styles %}
@@ -34,4 +34,8 @@
         <button class="btn btn-lg btn-primary btn-block" type="submit">Update Template</button>
       </form>
     </div> <!-- /container -->
+{% endblock %}
+
+{% block endscript %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/template.js') }}"></script>
 {% endblock %}
