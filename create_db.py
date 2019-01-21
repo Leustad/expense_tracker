@@ -1,5 +1,5 @@
 from expenses import db
-from expenses.models import Expenses
+from expenses.models import Expense
 
 
 db.create_all()

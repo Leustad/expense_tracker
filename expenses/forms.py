@@ -1,9 +1,14 @@
 import datetime
+
+from flask import session
 from flask_wtf import FlaskForm
-from wtforms import StringField, FloatField, SelectField, FormField, FieldList, PasswordField, BooleanField
+from wtforms import StringField, FloatField, SelectField, FormField, FieldList, PasswordField, BooleanField, \
+    TextAreaField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, InputRequired, Email, Length
+from wtforms.validators import DataRequired, InputRequired, Email, Length, ValidationError
 from wtforms import Form as NoCsrfForm
+
+from expenses.models import Template
 
 
 class ExpenseItem(NoCsrfForm):
@@ -32,3 +37,20 @@ class RegisterForm(FlaskForm):
     email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(min=4, max=80)])
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=50)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8)])
+
+
+def field_count_check(form, field):
+    if len(str(field).split(',')) < 1:
+        raise ValidationError('Must Have at least 1 Comma Separated Field Name')
+
+
+class AddTemplateFrom(FlaskForm):
+    name = StringField('template name', validators=[DataRequired(), Length(min=4, max=50)])
+    fields = TextAreaField('fields', validators=[DataRequired(), field_count_check])
+    default = BooleanField('default')
+
+
+class UpdateTemplateFrom(FlaskForm):
+    name = SelectField('template name', validators=[DataRequired()])
+    fields = TextAreaField('fields', validators=[DataRequired(), field_count_check])
+    default = BooleanField('default')

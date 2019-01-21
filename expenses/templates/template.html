@@ -1,0 +1,41 @@
+{% extends '_base.html' %}
+
+{% block title %}
+   | Templates
+{% endblock %}
+
+{% block styles %}
+
+{% endblock %}
+
+<div class="flashes">
+  {% for message in get_flashed_messages() %}
+    {{ message }}
+  {% endfor %}
+</div>
+
+{% block content %}
+    <div class="container">
+      <form class="form-signin" method="POST" action="/add_template">
+        <h2 class="form-signin-heading">Create your Template</h2>
+        {{ add_template_form.hidden_tag() }}
+        {{ add_template_form.name(placeholder='Template Name') }}
+        {{ add_template_form.fields(placeholder='Fields Names', rows=5, cols=70) }}
+        Default: {{ add_template_form.default }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Create Template</button>
+      </form>
+
+    <form class="form-signin" method="POST" action="/update_template">
+        <h2 class="form-signin-heading">Update Existing Templates</h2>
+        {{ update_template_form.hidden_tag() }}
+        {{ update_template_form.name(placeholder='Template Name') }}
+        {{ update_template_form.fields(placeholder='Fields Names', rows=5, cols=70) }}
+        Default: {{ update_template_form.default }}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Update Template</button>
+      </form>
+    </div> <!-- /container -->
+{% endblock %}
+
+{% block endscript %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/template.js') }}"></script>
+{% endblock %}
