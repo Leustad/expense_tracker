@@ -1,6 +1,3 @@
-import json
-
-import datetime
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import login_required, login_user, current_user, logout_user
 
@@ -49,16 +46,29 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
+@login_manager.unauthorized_handler
+def handle_needs_login():
+    return redirect(url_for('main.login', next=request.endpoint))
+
+
+def redirect_dest(fallback):
+    dest = request.args.get('next')
+    try:
+        dest_url = url_for(dest)
+    except:
+        return redirect(fallback)
+    return redirect(dest_url)
+
+
 @main_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm(request.form)
 
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
-            return redirect(url_for('main.index'))
+            return redirect_dest(fallback=url_for('main.index'))
 
         return '<h1>Bad Creds</h1>'
     return render_template('login.html', form=form)
@@ -166,6 +176,12 @@ def update_template():
     return render_template('template.html',
                            add_template_form=add_template_form,
                            update_template_form=update_template_form)
+
+
+@main_blueprint.route('/history', methods=['GET'])
+@login_required
+def history():
+    return '<h3>Historical Table Goes Here</h3>'
 
 
 @main_blueprint.route('/get_template_fields', methods=['POST'])

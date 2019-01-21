@@ -14,10 +14,11 @@
       <form class="form-signin" method="POST" action="/register">
         <h2 class="form-signin-heading">Please Register</h2>
         {{ form.hidden_tag() }}
-        {{ form.username(placeholder='Username') }}
-        {{ form.email(placeholder='Email') }}
-        {{ form.password(placeholder='Password') }}
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+        {{ form.username(placeholder='Username') }} <br>
+        <small>*Needs to be unique</small><br>
+        {{ form.email(placeholder='Email') }}<br>
+        {{ form.password(placeholder='Password') }}<br>
+        <button class="btn btn-lg btn-primary btn-block register" type="submit">Register</button>
       </form>
 
     </div> <!-- /container -->
