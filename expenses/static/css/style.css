@@ -6,9 +6,11 @@ html, body{
 input, select{
      box-shadow: #aeaeae 0px 2px 8px;
      height: 35px;
-     border-radius: 10px;
-     margin: 10px;
+     margin-bottom: 10px;
      padding: 0;
+}
+input#password, input#email{
+     width: 300px;
 }
 input:focus, select:focus{
     outline: none;
@@ -45,4 +47,23 @@ tr:nth-child(even) {
 
 table .amount{
     font-weight: bold;
+}
+
+input#add_template_name, select#update_template_name{
+    margin: 0 0 10px 0;
+    }
+
+input[type="checkbox"]
+{
+    vertical-align:middle;
+    margin: 0 0 0 10px;;
+    box-shadow: none;
+}
+
+.login, .register{
+    width: 125px;
+}
+
+.add-template-btn, .update-template-btn{
+    width: 200px;
 }
