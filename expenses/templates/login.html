@@ -5,20 +5,22 @@
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signin.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signin.css') }}">
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="col-lg-6">
-          <form class="form-signin" method="POST">
-            <h2 class="form-signin-heading">Please Login</h2>
-            {{ form.hidden_tag() }}
-              {{ form.email(placeholder='Email') }} <br>
-              {{ form.password(placeholder='Password') }} <br>
-            <label for="remember"> Remember me: </label>{{ form.remember }}
-            <button class="btn btn-lg btn-primary btn-block login" type="submit">Login</button>
-          </form>
-        </div>
-    </div> <!-- /container -->
+<div class="sign-in-div">
+    <form class="form-signin" method="POST">
+        <h2 class="form-signin-heading">Please Login</h2>
+        {{ form.hidden_tag() }}
+        {{ form.email(placeholder='Email') }} <br>
+        {{ form.password(placeholder='Password') }} <br>
+        <label for="remember"> Remember me: </label>{{ form.remember }} <br>
+        <button class="login" type="submit">Login</button>
+        <p>Not Have an Account? Click <a href="{{ url_for('main.register') }}">here</a></p>
+    </form>
+
+
+</div>
+
 {% endblock %}
