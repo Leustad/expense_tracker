@@ -4,53 +4,49 @@
 {% endblock %}
 
 {% block content %}
-<!--<div class="container">-->
-<div class="row">
-    <div class="col-lg-6">
-        <h3>Welcome, {{ name }}</h3>
-        <form class="form-horizontal" id="main-form" enctype=multipart/form-data role="form" method="post" action="/">
-            <input type="hidden" name="count" value="1"/>
-            {{ form.csrf_token }}
-            {% for expense_item in form.items %}
-                {{ expense_item.expense(placeholder="Expense Name", id="expense_0", value="") }}
-                {{ expense_item.cost(placeholder="Cost", id="cost_0", class="cost", value="") }}
-                {{ expense_item.due_date(id="due_date_0") }}
-                {{ expense_item.desc(id="desc_0") }}
-            {% endfor %}
+<div>
+    <h3>Welcome, {{ name }}</h3>
+    <form class="form-horizontal" id="main-form" enctype=multipart/form-data role="form" method="post" action="/">
+        <input type="hidden" name="count" value="1"/>
+        {{ form.csrf_token }}
+        {% for expense_item in form.items %}
+            {{ expense_item.expense(placeholder="Expense Name", id="expense_0", value="") }}
+            {{ expense_item.cost(placeholder="Cost", id="cost_0", class="cost", value="") }}
+            {{ expense_item.due_date(id="due_date_0") }}
+            {{ expense_item.desc(id="desc_0") }}
+        {% endfor %}
+        <button id="del_row_0" class="btn btn-secondary delete-row" type="button">-</button>
+        <button class="btn btn-info add-more" type="button">+</button>
+        <br id="br_0">
+        <hr>
+        <button class="submit-expenses" type="submit">Post Expense</button>
+    </form>
 
-            <button id="del_row_0" class="btn btn-secondary delete-row" type="button">-</button>
-            <button class="btn btn-info add-more" type="button">+</button>
-            <!--<input type="hidden" name="count" class="count" value="1" />-->
-            <br id="br_0">
-            <hr>
-            <button class="btn btn-sm btn-success" type="submit">Post Expense</button>
-        </form>
-                    <div class="totals">
-                <h3>TOTALS</h3>
-                <table>
-                    <tr>
-                        <td><strong>Mutual Total</strong></td>
-                        <td class="amount mutual"></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Per Person Total</strong></td>
-                        <td class="amount perperson"></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Personal Paycheck #1</strong></td>
-                        <td class="amount paycheck1"></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Personal Paycheck #2</strong></td>
-                        <td class="amount paycheck2"></td>
-                    </tr>
-                </table>
-            </div>
+    <div class="totals">
+        <h3>TOTALS</h3>
+        <table>
+            <tr>
+                <td><strong>Mutual Total</strong></td>
+                <td class="amount mutual"></td>
+            </tr>
+            <tr>
+                <td><strong>Per Person Total</strong></td>
+                <td class="amount perperson"></td>
+            </tr>
+            <tr>
+                <td><strong>Personal Paycheck #1</strong></td>
+                <td class="amount paycheck1"></td>
+            </tr>
+            <tr>
+                <td><strong>Personal Paycheck #2</strong></td>
+                <td class="amount paycheck2"></td>
+            </tr>
+        </table>
     </div>
-    <div class="col-lg-6">
-        <h3>Historical Graph goes here !!!</h3>
+</div>
+<div class="index-history">
+    <h3>Historical Graph goes here !!!</h3>
         <canvas id="chart" width="600" height="400"></canvas>
-    </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
 <script>

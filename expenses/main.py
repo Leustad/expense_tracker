@@ -181,7 +181,7 @@ def update_template():
 @main_blueprint.route('/history', methods=['GET'])
 @login_required
 def history():
-    return '<h3>Historical Table Goes Here</h3>'
+    return render_template('history.html')
 
 
 @main_blueprint.route('/get_template_fields', methods=['POST'])
