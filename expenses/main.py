@@ -1,3 +1,5 @@
+import datetime
+
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import login_required, login_user, current_user, logout_user
 
@@ -30,15 +32,18 @@ def index():
                 db.session.add(entry)
                 db.session.commit()
         return redirect(url_for('main.index'))
-    expenses = db.session.query(Expense).all()
-    for i in expenses:
-        dates.append(i.due_date)
-    dates = set(dates)
-
-    output = []
-    for i in expenses:
-        output.append(i.__dict__)
-    return render_template('index.html', form=form, expenses=output, dates=dates, name=current_user.username)
+    yty_data = {}
+    db_yty_data = db.session.query(Expense).filter(Expense.due_date >= (datetime.datetime.now() - datetime.timedelta(days=365)).replace(day=1),
+                                        Expense.user_id==session['user_id']
+                                        )
+    
+    yty_data = dict([(i.due_date.strftime('%Y%m%d'), []) for i in db_yty_data]) 
+    for i in db_yty_data:
+        yty_data[i.due_date.strftime('%Y%m%d')].append({'expense': i.expense,
+                                                        'cost': i.cost,
+                                                        'expense_type': i.expense_type
+                                                       })  
+    return render_template('index.html', form=form, expenses=yty_data, name=current_user.username)
 
 
 @login_manager.user_loader
