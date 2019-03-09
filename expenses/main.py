@@ -34,16 +34,20 @@ def index():
         return redirect(url_for('main.index'))
     yty_data = {}
     db_yty_data = db.session.query(Expense).filter(Expense.due_date >= (datetime.datetime.now() - datetime.timedelta(days=365)).replace(day=1),
-                                        Expense.user_id==session['user_id']
-                                        )
-    
-    yty_data = dict([(i.due_date.strftime('%Y%m%d'), []) for i in db_yty_data]) 
+                                                   Expense.user_id == session['user_id']
+                                                   )
+
+    yty_data = dict([(i.due_date.strftime('%Y%m%d'), []) for i in db_yty_data])
     for i in db_yty_data:
         yty_data[i.due_date.strftime('%Y%m%d')].append({'expense': i.expense,
                                                         'cost': i.cost,
                                                         'expense_type': i.expense_type
-                                                       })  
-    return render_template('index.html', form=form, expenses=yty_data, name=current_user.username)
+                                                        })
+    default_fields = Template.query.filter_by(user_id=session['user_id'],
+                                              default=True
+                                              ).one()
+    default_fields = default_fields.template
+    return render_template('index.html', form=form, expenses=yty_data, name=current_user.username, default_fields=default_fields)
 
 
 @login_manager.user_loader
@@ -86,7 +90,8 @@ def register():
     if form.validate_on_submit():
         new_user = User(username=form.username.data,
                         email=form.email.data,
-                        password=bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+                        password=bcrypt.generate_password_hash(
+                            form.password.data).decode('utf-8')
                         )
         print('new user: ', new_user.password)
         db.session.add(new_user)
@@ -106,17 +111,20 @@ def ready_update_template_form(update_template_form, update_fields):
     def _templates():
         return Template.query.filter_by(user_id=session['user_id']).all()
 
-    update_template_form.name.choices = [(i.name, i.name) for i in _templates()]
+    update_template_form.name.choices = [
+        (i.name, i.name) for i in _templates()]
 
     if update_fields:
-        template_list = [i.template for i in _templates() if i.name == _templates()[0].name]
+        template_list = [i.template for i in _templates() if i.name == _templates()[
+            0].name]
         template_list = ', '.join(map(str, template_list))
         update_template_form.fields.data = template_list
 
 
 def get_forms(update_fields):
     add_template_form = AddTemplateFrom(request.form, prefix='add_template_')
-    update_template_form = UpdateTemplateFrom(request.form, prefix='update_template_')
+    update_template_form = UpdateTemplateFrom(
+        request.form, prefix='update_template_')
     ready_update_template_form(update_template_form, update_fields)
     return add_template_form, update_template_form
 

@@ -1,4 +1,5 @@
 import datetime
+import decimal
 
 from flask import session
 from flask_wtf import FlaskForm
@@ -10,15 +11,19 @@ from wtforms import Form as NoCsrfForm
 
 from expenses.models import Template
 
+def check_numeric(form, field):
+    try:
+        decimal.Decimal(field)
+    except:
+        ValidationError('This field requires a numeric value')
 
 class ExpenseItem(NoCsrfForm):
     expense = StringField('Expense_Item', validators=[DataRequired()])
-    cost = FloatField('Cost', validators=[DataRequired()])
+    cost = FloatField('Cost', validators=[check_numeric])
     due_date = DateField('Due Date', format='%Y-%m-%d', validators=[DataRequired()],
                          default=datetime.datetime.today().date())
     desc = SelectField('Role', choices=[('mutual', 'Mutual'),
-                                        ('personal#1', 'Personal #1'),
-                                        ('personal#2', 'Personal #2')
+                                        ('personal', 'Personal'),
                                         ])
 
 

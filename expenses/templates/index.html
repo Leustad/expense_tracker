@@ -34,12 +34,8 @@
                 <td class="amount perperson"></td>
             </tr>
             <tr>
-                <td><strong>Personal Paycheck #1</strong></td>
-                <td class="amount paycheck1"></td>
-            </tr>
-            <tr>
-                <td><strong>Personal Paycheck #2</strong></td>
-                <td class="amount paycheck2"></td>
+                <td><strong>Personal</strong></td>
+                <td class="amount personal"></td>
             </tr>
         </table>
     </div>
@@ -51,6 +47,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
 <script>
+var default_fields = {{ default_fields|tojson }};
 var data = {{ expenses|tojson }};
 var ctx = document.getElementById("chart").getContext('2d');
 
@@ -75,7 +72,7 @@ var config = {
     responsive: true,
     title:{
       display:true,
-      text:'1 Expense Graph'
+      text:'Yearly Expenses'
     },
     tooltips: {
       mode: 'index',
@@ -102,7 +99,6 @@ var config = {
     }
   }
 };
-console.log(data);
 
 var dates = []
 var fields = []
@@ -145,13 +141,8 @@ $.each(fields, function(k, v){
     })
 });
 
-
-console.log('============');
-console.log(cost_per_field);
-
 config.data['labels'] = dates;
 $.each(cost_per_field, function(key, value){
-    console.log('a', key, value)
     color = getRandomColor();
     config.data.datasets.push({
         label: key,
