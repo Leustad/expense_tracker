@@ -99,7 +99,6 @@ $(document).ready(function(){
        return expenses
     }
     $("select[id^=desc_]").change(function(){
-        var data = $(this).val();
         totals = get_totals();
         edit_totals(totals);
     });

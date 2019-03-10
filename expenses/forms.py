@@ -59,3 +59,16 @@ class UpdateTemplateFrom(FlaskForm):
     name = SelectField('template name', validators=[DataRequired()])
     fields = TextAreaField('fields', validators=[DataRequired(), field_count_check])
     default = BooleanField('default')
+
+
+# class HistoryItem(NoCsrfForm):
+#     from_date = DateField('from_date', validators=[DataRequired()])
+#     to_date = DateField('to_date', validators=[DataRequired()])
+
+
+# class MetaHistory(HistoryItem, ExpenseItem):
+#     pass
+
+
+# class HistoryForm(FlaskForm):
+#     items = FieldList(FormField(MetaHistory), min_entries=1)

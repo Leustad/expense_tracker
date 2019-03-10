@@ -2,5 +2,25 @@
 
 {% block title %} | History{% endblock %}
 
+{% block script %}
+{% endblock %}
+
 {% block content %}
+<div class="form-horizontal history_page">
+    <div class="history_dates">
+        From: <input id="from_date" type="date" value={{ from_date.strftime('%Y-%m-%d') }}>
+        To: <input id="to_date" type="date" value={{ to_date.strftime('%Y-%m-%d') }}>
+        <button id="hist_btn" class="btn btn-info add-more" type="button">GO</button>
+    </div>
+
+    <div id="history">
+    </div>
+    <br id="br_0">
+    <hr>
+    <button class="submit-expenses" type="submit">Post Expense</button>
+</div>
+
+
+<script>var hist_data = ({{ data|safe }});</script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/history.js') }}"></script>
 {% endblock %}

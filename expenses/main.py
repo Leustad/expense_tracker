@@ -1,8 +1,10 @@
 import datetime
+import json
 
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
 from flask_login import login_required, login_user, current_user, logout_user
 
+from expenses.helpers import helper
 from expenses import db, bcrypt, login_manager
 from expenses.forms import ExpensesForm, LoginForm, RegisterForm, AddTemplateFrom, UpdateTemplateFrom
 from expenses.models import Expense, User, Template
@@ -33,9 +35,7 @@ def index():
                 db.session.commit()
         return redirect(url_for('main.index'))
     yty_data = {}
-    db_yty_data = db.session.query(Expense).filter(Expense.due_date >= (datetime.datetime.now() - datetime.timedelta(days=365)).replace(day=1),
-                                                   Expense.user_id == session['user_id']
-                                                   )
+    db_yty_data = helper.get_yty_data(db, Expense, session)
 
     yty_data = dict([(i.due_date.strftime('%Y%m%d'), []) for i in db_yty_data])
     for i in db_yty_data:
@@ -194,7 +194,40 @@ def update_template():
 @main_blueprint.route('/history', methods=['GET'])
 @login_required
 def history():
-    return render_template('history.html')
+    yty_data = []
+    db_yty_data = helper.get_yty_data(db, Expense, session)
+
+    for i in db_yty_data:
+        yty_data.append({'id': i.id,
+                         'expense': i.expense,
+                         'cost': i.cost,
+                         'due_date': i.due_date.strftime('%Y-%m-%d'),
+                         'type': i.expense_type})
+
+    today = datetime.datetime.now()
+    from_date = (today - datetime.timedelta(days=365)).replace(day=1)
+    return render_template('history.html', data=yty_data, from_date=from_date, to_date=today)
+
+
+@main_blueprint.route('/get_history', methods=['POST'])
+@login_required
+def get_history():
+    if request.method == 'POST':
+        to_date = request.json['to_date']
+        from_date = request.json['from_date']
+        yty_data = []
+
+        data = db.session.query(Expense).filter(Expense.due_date >= from_date,
+                                                Expense.due_date <= to_date,
+                                                Expense.user_id == session['user_id']
+                                                ).all()
+        for i in data:
+            yty_data.append({'id': i.id,
+                                'expense': i.expense,
+                                'cost': i.cost,
+                                'due_date': i.due_date.strftime('%Y-%m-%d'),
+                                'type': i.expense_type})
+        return jsonify(yty_data)
 
 
 @main_blueprint.route('/get_template_fields', methods=['POST'])
