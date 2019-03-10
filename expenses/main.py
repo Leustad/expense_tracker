@@ -220,14 +220,30 @@ def get_history():
         data = db.session.query(Expense).filter(Expense.due_date >= from_date,
                                                 Expense.due_date <= to_date,
                                                 Expense.user_id == session['user_id']
-                                                ).all()
+                                                ).order_by(Expense.id).all()
         for i in data:
             yty_data.append({'id': i.id,
-                                'expense': i.expense,
-                                'cost': i.cost,
-                                'due_date': i.due_date.strftime('%Y-%m-%d'),
-                                'type': i.expense_type})
+                             'expense': i.expense,
+                             'cost': i.cost,
+                             'due_date': i.due_date.strftime('%Y-%m-%d'),
+                             'type': i.expense_type})
         return jsonify(yty_data)
+
+
+@main_blueprint.route('/update_row', methods=['POST'])
+@login_required
+def update_row():
+    if request.method == 'POST':
+        update_data = request.json
+        row = Expense.query.filter_by(user_id=session['user_id'],
+                                      id=update_data['update_id']
+                                      ).first()
+        row.expese = update_data['expense']
+        row.cost = update_data['cost']
+        row.due_date = update_data['due_date']
+        row.expense_type = update_data['type']
+        db.session.commit()
+    return ''
 
 
 @main_blueprint.route('/get_template_fields', methods=['POST'])
