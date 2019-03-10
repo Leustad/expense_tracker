@@ -377,13 +377,18 @@ width: 100%;
 	.history_page{
 		width: 50%;
 		margin: auto;
+		text-align:center;
 	}
 
 	#history{
 		width: 100%;
+		text-align:center;
 	}
 	
 	.history_dates{
 		width: 80%;
 		margin: auto;
+	}
+	[id^=hist_row_]{
+		border-radius: 10px;
 	}
