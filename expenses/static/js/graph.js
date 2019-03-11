@@ -54,7 +54,7 @@ $(document).ready(function(){
     
     $.each(data, function(key, value){
         // Get Dates
-        dates.push(key);
+        dates.push([key.slice(4, 6), key.slice(6, 8), key.slice(0, 4)].join(' / '));
         $.each(value, function(k, v){
             fields.push(v['expense'])
         })
