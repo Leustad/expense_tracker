@@ -19,7 +19,7 @@ def get_user_id():
 @main_blueprint.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    dates = []
+    template_names = []
     form = ExpensesForm(request.form)
 
     if request.method == 'POST':
@@ -47,7 +47,24 @@ def index():
                                               default=True
                                               ).one()
     default_fields = default_fields.template
-    return render_template('index.html', form=form, expenses=yty_data, name=current_user.username, default_fields=default_fields)
+    for i in Template.query.filter_by(user_id=session['user_id']).all():
+        template_names.append(i.name)
+    print(template_names)
+    return render_template('index.html', form=form,
+                           expenses=yty_data, name=current_user.username,
+                           default_fields=default_fields, template_names=template_names)
+
+
+@main_blueprint.route('/get_template_data', methods=['POST'])
+@login_required
+def get_template_data():
+    if request.method == 'POST':
+        template_name = request.json['name']
+
+        temp = Template.query.filter_by(user_id=session['user_id'],
+                                        name=template_name
+                                        ).one()
+        return temp.template
 
 
 @login_manager.user_loader
@@ -88,10 +105,8 @@ def register():
     form = RegisterForm(request.form)
 
     if form.validate_on_submit():
-        new_user = User(username=form.username.data,
-                        email=form.email.data,
-                        password=bcrypt.generate_password_hash(
-                            form.password.data).decode('utf-8')
+        new_user = User(username=form.username.data, email=form.email.data,
+                        password=bcrypt.generate_password_hash(form.password.data).decode('utf-8')
                         )
         print('new user: ', new_user.password)
         db.session.add(new_user)
@@ -115,8 +130,7 @@ def ready_update_template_form(update_template_form, update_fields):
         (i.name, i.name) for i in _templates()]
 
     if update_fields:
-        template_list = [i.template for i in _templates() if i.name == _templates()[
-            0].name]
+        template_list = [i.template for i in _templates() if i.name == _templates()[0].name]
         template_list = ', '.join(map(str, template_list))
         update_template_form.fields.data = template_list
 
@@ -124,7 +138,7 @@ def ready_update_template_form(update_template_form, update_fields):
 def get_forms(update_fields):
     add_template_form = AddTemplateFrom(request.form, prefix='add_template_')
     update_template_form = UpdateTemplateFrom(
-        request.form, prefix='update_template_')
+            request.form, prefix='update_template_')
     ready_update_template_form(update_template_form, update_fields)
     return add_template_form, update_template_form
 
@@ -141,7 +155,6 @@ def template():
 @main_blueprint.route('/add_template', methods=['POST'])
 @login_required
 def add_template():
-    # logout_user()
     add_template_form, update_template_form = get_forms(update_fields=True)
     if request.method == 'POST' and add_template_form.validate_on_submit():
         template_name = Template.query.filter_by(id=session['user_id'],
@@ -230,9 +243,9 @@ def get_history():
         return jsonify(yty_data)
 
 
-@main_blueprint.route('/update_row', methods=['POST'])
+@main_blueprint.route('/update_history_row', methods=['POST'])
 @login_required
-def update_row():
+def update_history_row():
     if request.method == 'POST':
         update_data = request.json
         row = Expense.query.filter_by(user_id=session['user_id'],

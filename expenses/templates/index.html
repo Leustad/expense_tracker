@@ -10,14 +10,17 @@
 {% block content %}
 <div>
     <h3>Welcome, {{ name }}</h3>
+    <p>Available Templates: <select id="avail_templates"></select></p>
     <form class="form-horizontal" id="main-form" enctype=multipart/form-data role="form" method="post" action="/">
         <input type="hidden" name="count" value="1"/>
         {{ form.csrf_token }}
         {% for expense_item in form.items %}
+        <div id="all_expense_div">
             {{ expense_item.expense(placeholder="Expense Name", id="expense_0", value="") }}
             {{ expense_item.cost(placeholder="Cost", id="cost_0", class="cost", value="") }}
             {{ expense_item.due_date(id="due_date_0") }}
             {{ expense_item.desc(id="desc_0") }}
+        </div>
         {% endfor %}
         <button id="del_row_0" class="btn btn-secondary delete-row" type="button">-</button>
         <button class="btn btn-info add-more" type="button">+</button>
@@ -53,6 +56,7 @@
 <script>
 var default_fields = {{ default_fields|tojson }};
 var data = {{ expenses|tojson }};
+var templates = {{ template_names|safe }};
 var ctx = document.getElementById("chart").getContext('2d');
 
 </script>

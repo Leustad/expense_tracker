@@ -130,7 +130,7 @@ $(document).ready(function () {
     // Update row and disable it    
     function update_row(update_data) {
         $.ajax({
-            url: "/update_row",
+            url: "/update_history_row",
             type: "POST",
             contentType: 'application/json;charset=UTF-8',
             data: JSON.stringify(update_data),
