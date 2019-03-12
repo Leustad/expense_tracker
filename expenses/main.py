@@ -20,10 +20,12 @@ def get_user_id():
 @login_required
 def index():
     template_names = []
+    default_fields = None
     form = ExpensesForm(request.form)
 
     if request.method == 'POST':
         if form.validate_on_submit():
+            print(form.items.data)
             for item in form.items.data:
                 entry = Expense(item['expense'],
                                 item['cost'],
@@ -43,13 +45,16 @@ def index():
                                                         'cost': i.cost,
                                                         'expense_type': i.expense_type
                                                         })
-    default_fields = Template.query.filter_by(user_id=session['user_id'],
-                                              default=True
-                                              ).one()
-    default_fields = default_fields.template
+    try:
+        default_fields = Template.query.filter_by(user_id=session['user_id'],
+                                                  default=True
+                                                  ).one()
+        default_fields = default_fields.template
+    except Exception as e:
+        print(e)
+
     for i in Template.query.filter_by(user_id=session['user_id']).all():
         template_names.append(i.name)
-    print(template_names)
     return render_template('index.html', form=form,
                            expenses=yty_data, name=current_user.username,
                            default_fields=default_fields, template_names=template_names)
@@ -106,9 +111,9 @@ def register():
 
     if form.validate_on_submit():
         new_user = User(username=form.username.data, email=form.email.data,
-                        password=bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+                        password=bcrypt.generate_password_hash(
+                            form.password.data).decode('utf-8')
                         )
-        print('new user: ', new_user.password)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('main.index'))
@@ -130,7 +135,8 @@ def ready_update_template_form(update_template_form, update_fields):
         (i.name, i.name) for i in _templates()]
 
     if update_fields:
-        template_list = [i.template for i in _templates() if i.name == _templates()[0].name]
+        template_list = [i.template for i in _templates() if i.name == _templates()[
+            0].name]
         template_list = ', '.join(map(str, template_list))
         update_template_form.fields.data = template_list
 
@@ -138,7 +144,7 @@ def ready_update_template_form(update_template_form, update_fields):
 def get_forms(update_fields):
     add_template_form = AddTemplateFrom(request.form, prefix='add_template_')
     update_template_form = UpdateTemplateFrom(
-            request.form, prefix='update_template_')
+        request.form, prefix='update_template_')
     ready_update_template_form(update_template_form, update_fields)
     return add_template_form, update_template_form
 
@@ -217,9 +223,21 @@ def history():
                          'due_date': i.due_date.strftime('%Y-%m-%d'),
                          'type': i.expense_type})
 
+    graph_yty_data = dict([(i.due_date.strftime('%Y%m%d'), [])
+                           for i in db_yty_data])
+
+    for i in db_yty_data:
+        graph_yty_data[i.due_date.strftime('%Y%m%d')].append({'expense': i.expense,
+                                                              'cost': i.cost,
+                                                              'expense_type': i.expense_type
+                                                              })
+
     today = datetime.datetime.now()
     from_date = (today - datetime.timedelta(days=365)).replace(day=1)
-    return render_template('history.html', data=yty_data, from_date=from_date, to_date=today)
+    return render_template('history.html', data=yty_data,
+                           graph_yty_data=graph_yty_data,
+                           from_date=from_date,
+                           to_date=today)
 
 
 @main_blueprint.route('/get_history', methods=['POST'])
@@ -228,19 +246,32 @@ def get_history():
     if request.method == 'POST':
         to_date = request.json['to_date']
         from_date = request.json['from_date']
-        yty_data = []
+        hist_data = []
 
         data = db.session.query(Expense).filter(Expense.due_date >= from_date,
                                                 Expense.due_date <= to_date,
                                                 Expense.user_id == session['user_id']
                                                 ).order_by(Expense.id).all()
         for i in data:
-            yty_data.append({'id': i.id,
-                             'expense': i.expense,
-                             'cost': i.cost,
-                             'due_date': i.due_date.strftime('%Y-%m-%d'),
-                             'type': i.expense_type})
-        return jsonify(yty_data)
+            hist_data.append({'id': i.id,
+                              'expense': i.expense,
+                              'cost': i.cost,
+                              'due_date': i.due_date.strftime('%Y-%m-%d'),
+                              'type': i.expense_type})
+
+        graph_data = dict([(i.due_date.strftime('%Y%m%d'), [])
+                           for i in data])
+        print(graph_data)
+        for i in data:
+            graph_data[i.due_date.strftime('%Y%m%d')].append({'expense': i.expense,
+                                                              'cost': i.cost,
+                                                              'expense_type': i.expense_type
+                                                              })
+
+        return jsonify(
+            {'hist_data': hist_data,
+             'graph_yty_data': graph_data}
+        )
 
 
 @main_blueprint.route('/update_history_row', methods=['POST'])

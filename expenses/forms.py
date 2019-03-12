@@ -11,19 +11,21 @@ from wtforms import Form as NoCsrfForm
 
 from expenses.models import Template
 
+
 def check_numeric(form, field):
     try:
         decimal.Decimal(field)
     except:
         ValidationError('This field requires a numeric value')
 
+
 class ExpenseItem(NoCsrfForm):
     expense = StringField('Expense_Item', validators=[DataRequired()])
     cost = FloatField('Cost', validators=[check_numeric])
     due_date = DateField('Due Date', format='%Y-%m-%d', validators=[DataRequired()],
                          default=datetime.datetime.today().date())
-    desc = SelectField('Role', choices=[('mutual', 'Mutual'),
-                                        ('personal', 'Personal'),
+    desc = SelectField('Role', choices=[('Mutual', 'Mutual'),
+                                        ('Personal', 'Personal'),
                                         ])
 
 

@@ -5,12 +5,11 @@ $(document).ready(function(){
     var expense_div = $('#all_expense_div');
 
     function add_row(v, next){
-        console.log(v, next);
         var expense_row = $('<div id="row_expense_div_' + next + '"/>')
 
-        var input_expense = $('<input placeholder="<Expense>" value="' + v + '" id="expense_' + next + '">')
-        var input_cost = $('<input placeholder="Cost" id="cost_' + next + '">')
-        var input_due_date = $('<input type="date" value="' + today + '" id="due_date_' + next + '">')
+        var input_expense = $('<input placeholder="<Expense>" name="items-' + next + '-expense" value="' + v + '" id="expense_' + next + '">')
+        var input_cost = $('<input placeholder="Cost" name="items-' + next + '-cost" value="" id="cost_' + next + '">')
+        var input_due_date = $('<input type="date" name="items-' + next + '-due-date" value="' + today + '" id="due_date_' + next + '">')
         var input_type = $('<select type="text" id="desc_' + next + '" name="items-' + next + '-desc">')
         var type_option1 = $('<option value="Mutual"/>').text('Mutual');
         var type_option2 = $('<option value="Personal" />').text('Personal');
@@ -35,7 +34,6 @@ $(document).ready(function(){
         input_cost.focusout(function() {
             edit_totals(get_totals())
         });
-        next += 1;
     }
 
     // Default_fields
@@ -50,6 +48,7 @@ $(document).ready(function(){
         default_fields = default_fields.split(', ');
         $.each(default_fields, function(k, v){
             add_row(v, next);
+            next += 1;
         });
         $("[id^=del_row_]").last().remove();
         $('.add-more').remove();
@@ -104,7 +103,6 @@ $(document).ready(function(){
     $(".add-more").click(function(){
         // e.preventDefault();
         var last_item = $("[id^=del_row_]").last();
-        console.log(parseInt(last_item.attr('id').split("_")[2]) + 1);
         next = parseInt(last_item.attr('id').split("_")[2]) + 1;
 
         add_row(v='', next);
@@ -134,7 +132,6 @@ $(document).ready(function(){
         var personal = 0;
         var mutual = 0;
         $("[id^=row_expense_div_]").each(function(){
-        console.log('a');
             row_num = this.id.split("_")[3];
             val = $("#desc_" + row_num).val();
             

@@ -51,13 +51,13 @@
     <h3>Historical Graph goes here !!!</h3>
 <canvas id="chart"></canvas>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/graph.js') }}"></script>
 <script>
 var default_fields = {{ default_fields|tojson }};
-var data = {{ expenses|tojson }};
+var all_data = {{ expenses|tojson }};
 var templates = {{ template_names|safe }};
 var ctx = document.getElementById("chart").getContext('2d');
-
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/graph.js') }}"></script>
+<script>draw_hist_graph(all_data);</script>
 {% endblock %}
