@@ -1,7 +1,7 @@
 $(document).ready(function () {
     var data = hist_data;
     var fields = ['expense', 'cost', 'due_date', 'type'];
-    var history_div = $("#history");
+    var history_div = $("#history_data");
 
     function sanitize(data) {
         var output = data.replace(/<script[^>]*?>.*?<\/script>/gi, '').
@@ -103,7 +103,7 @@ $(document).ready(function () {
 
     // Emply out the history page
     function clear_rows() {
-        $('#history').empty();
+        $('#history_data').empty();
     };
 
     // Get the new history data per passed in dates
@@ -119,7 +119,12 @@ $(document).ready(function () {
             }),
             success: function (result) {
                 clear_rows();
-                populate_history(result);
+                console.log(result.graph_yty_data);
+                populate_history(result.hist_data);
+                $.getScript('static/js/graph.js', function(){
+                    // TODO: Delete the old canvas !!!
+                    draw_hist_graph(result.graph_yty_data);
+                });
             },
             error: function (result) {
                 console.log('Server error !! Can\'t get the history data');
@@ -140,6 +145,8 @@ $(document).ready(function () {
                 $('#checkbox_' + update_data['update_id']).prop('checked', false);
                 $('#hist_row_' + update_data['update_id']).animate({backgroundColor: '#2196F3'}, 'slow');
                 $('#hist_row_' + update_data['update_id']).animate({backgroundColor: 'white'}, 'slow');
+
+                // TODO: After updating the row, get the new data and display it in the graph
             },
             error: function (result) {
                 alert('Server error !!');

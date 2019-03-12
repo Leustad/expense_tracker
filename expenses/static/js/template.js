@@ -10,7 +10,6 @@ $(document).ready(function(){
                 'template_name': $("#update_template_name").val()
             }),
             success: function(response){
-                console.log(response.fields);
                 $('#update_template_fields').val(response.fields)
             },
             error: function(error){

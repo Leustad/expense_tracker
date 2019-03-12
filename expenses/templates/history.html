@@ -13,12 +13,20 @@
         <button id="hist_btn" class="btn btn-info add-more" type="button">GO</button>
     </div>
 
-    <div id="history">
+    <div id="history_data">
     </div>
-    <hr>
+    <div id="history_graph">
+        <canvas id="chart"></canvas>
+    </div>
+    <!-- <hr> -->
 </div>
-
-
-<script>var hist_data = ({{ data|safe }});</script>
+<script>
+    var hist_data = ({{ data|safe }});
+    var all_data = ({{  graph_yty_data|safe }});
+    var ctx = document.getElementById("chart").getContext('2d');
+</script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/history.js') }}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/graph.js') }}"></script>
+<script>draw_hist_graph(all_data);</script>
 {% endblock %}
