@@ -1,5 +1,5 @@
 function draw_hist_graph(all_data) {
-	var MONTHS = ["January", "February", "March", "April", "May", "June"];
+	$('.chartjs-hidden-iframe').remove();
 
 	function getRandomColor() {
 		var letters = '0123456789ABCDEF';
@@ -119,6 +119,8 @@ function draw_hist_graph(all_data) {
 			fill: false
 		})
 	});
-
+	$('#chart').remove();
+	$('#history_graph').append('<canvas id="chart" width="931" height="465" style=display: block; width: 931px; height: 465px; ></canvas>');
+	var ctx = document.getElementById("chart").getContext("2d");
 	var myLine = new Chart(ctx, config);
 }

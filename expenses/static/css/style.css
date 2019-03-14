@@ -45,10 +45,12 @@ section {
 }
 
 section .expense-form,
-section .index-history {
+section #history_graph {
 	background: white;
 	width: 50%;
+	text-align: center;
 }
+
 
 ul {
 	margin: 0;
