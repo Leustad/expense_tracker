@@ -1,10 +1,10 @@
-function draw_hist_graph(all_data) {
+function draw_hist_graph(all_data, graph_type='bar') {
 	$('.chartjs-hidden-iframe').remove();
 
 	function getRandomColor() {
-		var letters = '0123456789ABCDEF';
-		var color = '#';
-		for (var i = 0; i < 6; i++) {
+		let letters = '0123456789ABCDEF';
+		let color = '#';
+		for (let i = 0; i < 6; i++) {
 			color += letters[Math.floor(Math.random() * 16)];
 		}
 		return color;
@@ -12,15 +12,18 @@ function draw_hist_graph(all_data) {
 
 
 	var config = {
-		type: 'bar',
+		type: graph_type,
 		data: {
 			datasets: [],
 		},
 		options: {
 			responsive: true,
+			legend:{
+				position: 'bottom'
+			},
 			title: {
 				display: false,
-				text: 'test_title'
+				text: 'No Title'
 			},
 			tooltips: {
 				mode: 'x',
@@ -66,9 +69,9 @@ function draw_hist_graph(all_data) {
 		}
 	};
 
-	var dates = []
-	var fields = []
-	var cost_per_field = {}
+	let dates = []
+	let fields = []
+	let cost_per_field = {}
 
 	$.each(all_data, function (key, value) {
 		// Get Dates
@@ -82,7 +85,7 @@ function draw_hist_graph(all_data) {
 	$.unique(fields.sort());
 
 	function check_value(value, field_name) {
-		var cost = 0;
+		let cost = 0;
 		$.each(value, function (k, v) {
 			if (v.expense == field_name) {
 				cost = v.cost;

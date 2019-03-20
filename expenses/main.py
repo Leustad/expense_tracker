@@ -37,10 +37,10 @@ def index():
                 db.session.commit()
         return redirect(url_for('main.index'))
     yty_data = {}
-    db_yty_data = helper.get_yty_data(db, Expense, session)
+    six_months = helper.get_six_months_data(db, Expense, session)
 
-    yty_data = dict([(i.due_date.strftime('%Y%m%d'), []) for i in db_yty_data])
-    for i in db_yty_data:
+    yty_data = dict([(i.due_date.strftime('%Y%m%d'), []) for i in six_months])
+    for i in six_months:
         yty_data[i.due_date.strftime('%Y%m%d')].append({'expense': i.expense,
                                                         'cost': i.cost,
                                                         'expense_type': i.expense_type
@@ -209,14 +209,13 @@ def update_template():
                            add_template_form=add_template_form,
                            update_template_form=update_template_form)
 
-
 @main_blueprint.route('/history', methods=['GET'])
 @login_required
 def history():
     yty_data = []
-    db_yty_data = helper.get_yty_data(db, Expense, session)
+    six_months = helper.get_six_months_data(db, Expense, session)
 
-    for i in db_yty_data:
+    for i in six_months:
         yty_data.append({'id': i.id,
                          'expense': i.expense,
                          'cost': i.cost,
@@ -224,16 +223,16 @@ def history():
                          'type': i.expense_type})
 
     graph_yty_data = dict([(i.due_date.strftime('%Y%m%d'), [])
-                           for i in db_yty_data])
+                           for i in six_months])
 
-    for i in db_yty_data:
+    for i in six_months:
         graph_yty_data[i.due_date.strftime('%Y%m%d')].append({'expense': i.expense,
                                                               'cost': i.cost,
                                                               'expense_type': i.expense_type
                                                               })
 
     today = datetime.datetime.now()
-    from_date = (today - datetime.timedelta(days=365)).replace(day=1)
+    from_date = (today - datetime.timedelta(5*365/12)).replace(day=1)
     return render_template('history.html', data=yty_data,
                            graph_yty_data=graph_yty_data,
                            from_date=from_date,
@@ -261,7 +260,6 @@ def get_history():
 
         graph_data = dict([(i.due_date.strftime('%Y%m%d'), [])
                            for i in data])
-        print(graph_data)
         for i in data:
             graph_data[i.due_date.strftime('%Y%m%d')].append({'expense': i.expense,
                                                               'cost': i.cost,

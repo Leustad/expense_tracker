@@ -1,20 +1,20 @@
 $(document).ready(function(){
     var next = 0;
-    var today = new Date().toISOString().split('T')[0];
-    var fields = ['expense', 'cost', 'due_date', 'desc'];
-    var expense_div = $('#all_expense_div');
+    const today = new Date().toISOString().split('T')[0];
+    const fields = ['expense', 'cost', 'due_date', 'desc'];
+    const expense_div = $('#all_expense_div');
 
     function add_row(v, next){
-        var expense_row = $('<div id="row_expense_div_' + next + '"/>')
+        const expense_row = $('<div id="row_expense_div_' + next + '"/>')
 
-        var input_expense = $('<input placeholder="<Expense>" name="items-' + next + '-expense" value="' + v + '" id="expense_' + next + '">')
-        var input_cost = $('<input placeholder="Cost" name="items-' + next + '-cost" value="" id="cost_' + next + '">')
-        var input_due_date = $('<input type="date" name="items-' + next + '-due-date" value="' + today + '" id="due_date_' + next + '">')
-        var input_type = $('<select type="text" id="desc_' + next + '" name="items-' + next + '-desc">')
-        var type_option1 = $('<option value="Mutual"/>').text('Mutual');
-        var type_option2 = $('<option value="Personal" />').text('Personal');
+        let input_expense = $('<input placeholder="<Expense>" name="items-' + next + '-expense" value="' + v + '" id="expense_' + next + '">')
+        let input_cost = $('<input placeholder="Cost" name="items-' + next + '-cost" value="" id="cost_' + next + '">')
+        let input_due_date = $('<input type="date" name="items-' + next + '-due-date" value="' + today + '" id="due_date_' + next + '">')
+        let input_type = $('<select type="text" id="desc_' + next + '" name="items-' + next + '-desc">')
+        let type_option1 = $('<option value="Mutual"/>').text('Mutual');
+        let type_option2 = $('<option value="Personal" />').text('Personal');
 
-        var del_row_btn = $('<button id="del_row_' + next + '" class="btn btn-secondary delete-row" type="button">-</button>');
+        let del_row_btn = $('<button id="del_row_' + next + '" class="btn btn-secondary delete-row" type="button">-</button>');
 
         expense_row.append(input_expense);
         expense_row.append(input_cost);
@@ -77,14 +77,14 @@ $(document).ready(function(){
 
     // Get Changed Template data
     $('#avail_templates').change(function () {
-        var selected_template = this.value;
+        let selected_template = this.value;
         $.ajax({
             url: "/get_template_data",
             type: "POST",
             contentType: 'application/json;charset=UTF-8',
             data: JSON.stringify({'name': selected_template}),
             success: function (result) {
-                var clone_add_row = $('#add_row_btn').clone(true, true);  //Therefore we keep the event handlers
+                let clone_add_row = $('#add_row_btn').clone(true, true);  //Therefore we keep the event handlers
                 delete_rows('all');
                 next = 0;
                 $.each(result.split(', '), function(idx, value){
@@ -102,11 +102,11 @@ $(document).ready(function(){
     // Add a new row
     $(".add-more").click(function(){
         // e.preventDefault();
-        var last_item = $("[id^=del_row_]").last();
+        let last_item = $("[id^=del_row_]").last();
         next = parseInt(last_item.attr('id').split("_")[2]) + 1;
 
         add_row(v='', next);
-        var clone_add_row = $('#add_row_btn').clone(true, true);  //Therefore we keep the event handlers
+        let clone_add_row = $('#add_row_btn').clone(true, true);  //Therefore we keep the event handlers
         $('#add_row_btn').remove();
         clone_add_row.appendTo($("[id^=row_expense_div_]").last());
 
@@ -119,18 +119,18 @@ $(document).ready(function(){
     });
 
     function edit_totals(total){
-        var mutual = $('.mutual');
-        var perperson = $('.perperson');
-        var personal = $('.personal');
+        const mutual = $('.mutual');
+        const perperson = $('.perperson');
+        const personal = $('.personal');
 
         mutual.text("$ " + total[1]);
         perperson.text("$ " + (total[1]/2).toFixed(2));
         personal.text("$ " + total[0]);
     }
     function get_totals(){
-        var expenses = [];
-        var personal = 0;
-        var mutual = 0;
+        let expenses = [];
+        let personal = 0;
+        let mutual = 0;
         $("[id^=row_expense_div_]").each(function(){
             row_num = this.id.split("_")[3];
             val = $("#desc_" + row_num).val();
@@ -167,9 +167,9 @@ $(document).ready(function(){
 
     // Re-index All Fields
     function update_fields(){
-        var fields = ['row_expense_div', 'expense', 'cost', 'due_date', 'desc', 'del_row', 'br'];
-        $.each(fields, function(idx, value){
-            var ctr = 0;
+        const re_index_fields = ['row_expense_div', 'expense', 'cost', 'due_date', 'desc', 'del_row', 'br'];
+        $.each(re_index_fields, function(idx, value){
+            let ctr = 0;
             $("[id^=" + value + "]").each(function(index, el){
                 $(this).attr('id', value + '_' + ctr);
                // $(this).off('focusout');

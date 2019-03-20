@@ -16,16 +16,16 @@ $(document).ready(function () {
     function populate_history(hist_data) {
         current_data = {};
         $.each(hist_data, function (idx, value) {
-            var row_div = $('<div id="hist_row_' + value.id + '"/>')
-            var input_id = $('<input type=hidden value="' + value.id + '" id="' + value.id + '">')
-            var input_expense = $('<input value="' + value.expense + '" id="expense_' + value.id + '">')
-            var input_cost = $('<input value="' + value.cost + '" id="cost_' + value.id + '">')
-            var input_due_date = $('<input type="date" value="' + value.due_date + '" id="due_date_' + value.id + '">')
-            var input_type = $('<input value="' + value.type + '" id="type_' + value.id + '">')
-            var label = $('<label class="switch"/>')
-            var input_checkbox = $('<input type="checkbox" id="checkbox_' + value.id + '">')
-            var span_slider = $('<span class="slider"/>')
-            var update_button = $('<button name="update" type="button" style="display: none;" id="update_' + value.id + '"/>')
+            let row_div = $('<div id="hist_row_' + value.id + '"/>')
+            let input_id = $('<input type=hidden value="' + value.id + '" id="' + value.id + '">')
+            let input_expense = $('<input value="' + value.expense + '" id="expense_' + value.id + '">')
+            let input_cost = $('<input value="' + value.cost + '" id="cost_' + value.id + '">')
+            let input_due_date = $('<input type="date" value="' + value.due_date + '" id="due_date_' + value.id + '">')
+            let input_type = $('<input value="' + value.type + '" id="type_' + value.id + '">')
+            let label = $('<label class="switch"/>')
+            let input_checkbox = $('<input type="checkbox" id="checkbox_' + value.id + '">')
+            let span_slider = $('<span class="slider"/>')
+            let update_button = $('<button name="update" type="button" style="display: none;" id="update_' + value.id + '"/>')
 
             row_div.append(input_id);
             row_div.append(input_expense);
@@ -36,13 +36,13 @@ $(document).ready(function () {
             label.append(span_slider);
             row_div.append(label);
             row_div.append(update_button);
-            update_button.text('Update')
+            update_button.text('<< Update')
             history_div.append(row_div);
-            history_div.append('<br>');
+            // history_div.append('<br>');
 
 
             $("#update_" + value.id).click(function (e) {
-                var message = '';
+                let message = '';
                 e.preventDefault();
                 var update_id = $(this).attr('id').split('_')[1]
                 $.each(fields, function (idx, value) {
@@ -119,10 +119,9 @@ $(document).ready(function () {
             }),
             success: function (result) {
                 clear_rows();
-                console.log(result.graph_yty_data);
                 populate_history(result.hist_data);
                 $.getScript('static/js/graph.js', function(){
-                    // TODO: Delete the old canvas !!!
+                    // Re-Draw the graph
                     draw_hist_graph(result.graph_yty_data);
                 });
             },
