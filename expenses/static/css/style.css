@@ -390,6 +390,7 @@ update_template_default {
 	display: inline-block;
 	width: 60px;
 	height: 34px;
+	vertical-align: middle;
 }
 
 .switch input {
@@ -461,6 +462,28 @@ input:checked+.slider:before {
 	height:auto;
 }
 
+button[id^=update_]{
+	margin-left: 10px;
+	background: #2196F3;
+	border-radius: 4px;
+	height: 34px;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+	opacity: 0.6;
+	transition: 0.3s;
+}
+
+button[id^=update_]:hover{
+	box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+	opacity: 1;
+}
+
 [id^=hist_row_] {
 	border-radius: 10px;
+}
+
+#history_graph input{
+	vertical-align: middle;
+	width: 15px;
+	height: 20px;
+	margin: 2px;
 }
