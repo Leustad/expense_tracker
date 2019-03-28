@@ -3,7 +3,7 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: python:3.5.1
+image: python:3.7.2
 
 clone:
   depth: "full"
@@ -20,6 +20,6 @@ pipelines:
             - tox --version
             - echo "Push to HEROKU"
             - git push -f https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME.git HEAD
-            - echo "Push - DONE !! "
+            - echo "Git Push Heroku Master - DONE !! "
             - echo "Script Done !!"
 
