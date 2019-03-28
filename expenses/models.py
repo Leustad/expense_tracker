@@ -6,6 +6,7 @@ from expenses import db, ma, config
 
 class Schema():
     region_config = config.os.environ['APP_SETTINGS'].split('.')[2]
+    print(f'Running with: {region_config}')
     class_ = getattr(config, region_config)
     schema_name = class_.SCHEMA
 

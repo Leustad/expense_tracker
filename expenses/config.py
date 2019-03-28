@@ -22,7 +22,8 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:{}@localhost/expenses'.format(os.environ['DB_PASS_DEV'])
+    psw = os.environ['DB_PASS_DEV'] if os.environ['DB_PASS_DEV'] else None
+    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:{}@localhost/expenses'.format(psw)
     SCHEMA = 'leustad'
 
 
