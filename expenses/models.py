@@ -1,11 +1,17 @@
+import os, importlib
+
 from flask_login import UserMixin
 
-from expenses import db, ma
+from expenses import db, ma, config
 
+class Schema():
+    region_config = config.os.environ['APP_SETTINGS'].split('.')[2]
+    class_ = getattr(config, region_config)
+    schema_name = class_.SCHEMA
 
 class User(UserMixin, db.Model):
     __tabelname__ = 'user'
-    __table_args__ = {'schema': 'leustad'}
+    __table_args__ = {'schema': Schema.schema_name}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique=False)
@@ -18,7 +24,7 @@ class User(UserMixin, db.Model):
 
 class Template(db.Model):
     __tabelname__ = 'template'
-    __table_args__ = {'schema': 'leustad'}
+    __table_args__ = {'schema': Schema.schema_name}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(50), unique=False)
@@ -39,7 +45,7 @@ class Template(db.Model):
 
 class Expense(db.Model):
     __tabelname__ = 'expense'
-    __table_args__ = {'schema': 'leustad'}
+    __table_args__ = {'schema': Schema.schema_name}
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     expense = db.Column(db.String, nullable=False)
