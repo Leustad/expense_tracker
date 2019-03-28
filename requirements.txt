@@ -13,7 +13,6 @@ Jinja2==2.10
 MarkupSafe==1.1.0
 marshmallow==2.17.0
 marshmallow-sqlalchemy==0.15.0
-newrelic==4.16.0.116
 psycopg2==2.7.6.1
 pycodestyle==2.5.0
 pycparser==2.19
