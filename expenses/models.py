@@ -32,7 +32,7 @@ class Template(db.Model):
     template = db.Column(db.String, unique=False)
     default = db.Column(db.Boolean)
 
-    user_id = db.Column(db.ForeignKey('leustad.user.id'))
+    user_id = db.Column(db.ForeignKey(f'{Schema.schema_name}.user.id'))
 
     def __init__(self, name, template, default, user_id):
         self.name = name
@@ -54,7 +54,7 @@ class Expense(db.Model):
     due_date = db.Column(db.DateTime, nullable=False)
     expense_type = db.Column(db.String, nullable=False)
 
-    user_id = db.Column(db.ForeignKey('leustad.user.id'), nullable=False)
+    user_id = db.Column(db.ForeignKey(f'{Schema.schema_name}.user.id'), nullable=False)
 
     def __init__(self, expense, cost, due_date, expense_type, user_id):
         self.expense = expense
