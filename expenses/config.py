@@ -10,11 +10,12 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = os.urandom(24)
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
+    PSW = os.environ['DB_PASS_DEV'] if os.environ.get('DB_PASS_DEV') else None
 
 class ProductionConfig(Config):
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = '{}'.format(os.environ['HEROKU_POSTGRESQL_GREEN_URL'])
+    db_url = os.environ['HEROKU_POSTGRESQL_GREEN_URL'] if os.environ.get('HEROKU_POSTGRESQL_GREEN_URL') else None
+    SQLALCHEMY_DATABASE_URI = f'{db_url}'
     SCHEMA = 'snowy'
     # SQLALCHEMY_BINDS = 'expenses_dev'
 
@@ -22,13 +23,12 @@ class ProductionConfig(Config):
 class DevelopmentConfig(Config):
     DEVELOPMENT = True
     DEBUG = True
-    psw = os.environ['DB_PASS_DEV'] if os.environ['DB_PASS_DEV'] else None
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:{}@localhost/expenses'.format(psw)
+    SQLALCHEMY_DATABASE_URI = f'postgresql://postgres:{Config.PSW}@localhost/expenses'
     SCHEMA = 'leustad'
 
 
 class TestingConfig(Config):
     TESTING = True
     DEVELOPMENT = False
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:{}@main-pi/expenses'.format(os.environ['DB_PASS_TEST'])
+    SQLALCHEMY_DATABASE_URI = f'postgresql://postgres:{Config.PSW}@main-pi/expenses'
     SCHEMA = 'snowy_test'
