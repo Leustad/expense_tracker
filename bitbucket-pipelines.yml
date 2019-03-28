@@ -12,7 +12,7 @@ pipelines:
   branches:
     master:
       - step:
-        deployment: production
+          deployment: production
           script: # Modify the commands below to build your repository.
             - echo "This Script only runs on Master Branch."
             - pip install -U tox
