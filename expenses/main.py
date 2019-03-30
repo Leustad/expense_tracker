@@ -22,10 +22,10 @@ def index():
     template_names = []
     default_fields = None
     form = ExpensesForm(request.form)
+    default_template_name = ''
 
     if request.method == 'POST':
         if form.validate_on_submit():
-            print(form.items.data)
             for item in form.items.data:
                 entry = Expense(item['expense'],
                                 item['cost'],

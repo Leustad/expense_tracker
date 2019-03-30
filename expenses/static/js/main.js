@@ -185,7 +185,7 @@ $(document).ready(function(){
 
     // Re-index All Fields
     function update_fields(){
-        const re_index_fields = ['row_expense_div', 'expense', 'cost', 'due_date', 'desc', 'del_row', 'br'];
+        const re_index_fields = ['row_expense_div', 'expense', 'cost', 'due-date', 'desc', 'del_row', 'br'];
         $.each(re_index_fields, function(idx, value){
             let ctr = 0;
             $("[id^=" + value + "]").each(function(index, el){
