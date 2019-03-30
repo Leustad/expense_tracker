@@ -22,8 +22,7 @@ def check_numeric(form, field):
 class ExpenseItem(NoCsrfForm):
     expense = StringField('Expense_Item', validators=[DataRequired()])
     cost = FloatField('Cost', validators=[check_numeric])
-    due_date = DateField('Due Date', format='%Y-%m-%d', validators=[DataRequired()],
-                         default=datetime.datetime.today().date())
+    due_date = DateField('Due Date', format='%Y-%m-%d', validators=[DataRequired()])
     desc = SelectField('Role', choices=[('Mutual', 'Mutual'),
                                         ('Personal', 'Personal'),
                                         ])
