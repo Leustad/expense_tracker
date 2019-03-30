@@ -37,7 +37,7 @@ $(document).ready(function(){
     }
 
     // Default_fields
-    if (default_fields){
+    if (default_fields){       
         // remove the existing row
         $("[id^=cost]").remove();
         $("[id^=expense]").remove();
@@ -67,36 +67,54 @@ $(document).ready(function(){
 
     // Change Template
     if (templates){
-        var avail_templates = $('#avail_templates');
+        let avail_templates = $('#avail_templates');
+        let temp = $('<option value="None"/>');
+        temp.text('None')
+        avail_templates.append(temp);
+
         $.each(templates, function(idx, value){
-            var template_option = $('<option value="' + value + '" />');
+            let template_option = $('<option value="' + value + '" />');
             template_option.text(value);
             avail_templates.append(template_option)
         })
+        // Set selected template name to the defaul template name
+        $('#avail_templates').val(default_template_name);
+    }else{
+        let template_option = $('<option value="None"/>');
+        template_option.text('None');
+        avail_templates.append(template_option)
     };
-
+    
     // Get Changed Template data
     $('#avail_templates').change(function () {
         let selected_template = this.value;
-        $.ajax({
-            url: "/get_template_data",
-            type: "POST",
-            contentType: 'application/json;charset=UTF-8',
-            data: JSON.stringify({'name': selected_template}),
-            success: function (result) {
-                let clone_add_row = $('#add_row_btn').clone(true, true);  //Therefore we keep the event handlers
-                delete_rows('all');
-                next = 0;
-                $.each(result.split(', '), function(idx, value){
-                    add_row(value, next);
-                    next += 1;
-                })
-                clone_add_row.appendTo($("[id^=row_expense_div_]").last());
-            },
-            error: function (result) {
-                console.log('Server error !! Can\'t Get Template Data');
-            }
-        });
+        let clone_add_row = $('#add_row_btn').clone(true, true);  //Therefore we keep the event handlers
+        if (selected_template === 'None') {
+            delete_rows('all');
+            next = 0;
+            add_row('', next);
+            clone_add_row.appendTo($("[id^=row_expense_div_]").last());
+        }else{
+            $.ajax({
+                url: "/get_template_data",
+                type: "POST",
+                contentType: 'application/json;charset=UTF-8',
+                data: JSON.stringify({'name': selected_template}),
+                success: function (result) {
+                    delete_rows('all');
+                    next = 0;
+                    $.each(result.split(', '), function(idx, value){
+                        add_row(value, next);
+                        next += 1;
+                    })
+                    clone_add_row.appendTo($("[id^=row_expense_div_]").last());
+                },
+                error: function (result) {
+                    console.log('Server error !! Can\'t Get Template Data');
+                }
+            });
+        }
+
     });
 
     // Add a new row
