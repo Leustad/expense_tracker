@@ -49,7 +49,9 @@ def index():
         default_fields = Template.query.filter_by(user_id=session['user_id'],
                                                   default=True
                                                   ).one()
+        default_template_name = default_fields.name
         default_fields = default_fields.template
+        
     except Exception as e:
         print(e)
 
@@ -57,7 +59,8 @@ def index():
         template_names.append(i.name)
     return render_template('index.html', form=form,
                            expenses=yty_data, name=current_user.username,
-                           default_fields=default_fields, template_names=template_names)
+                           default_fields=default_fields, template_names=template_names,
+                           default_template_name=default_template_name)
 
 
 @main_blueprint.route('/get_template_data', methods=['POST'])
