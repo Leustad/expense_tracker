@@ -10,7 +10,7 @@
 {% block content %}
 <div>
     <h3>Welcome, {{ name }}</h3>
-    <p>Available Templates: <select id="avail_templates"></select></p>
+    <p>Select Template: <select id="avail_templates"></select></p>
     <form class="form-horizontal" id="main-form" enctype=multipart/form-data role="form" method="post" action="/">
         <input type="hidden" name="count" value="1"/>
         {{ form.csrf_token }}
@@ -52,9 +52,10 @@
     <canvas id="chart"></canvas>
 </div>
 <script>
-var default_fields = {{ default_fields|tojson }};
-var all_data = {{ expenses|tojson }};
-var templates = {{ template_names|safe }};
+let default_fields = {{ default_fields|tojson }};
+let default_template_name = {{ default_template_name|tojson }}
+let all_data = {{ expenses|tojson }};
+let templates = {{ template_names|safe }};
 var ctx = document.getElementById("chart").getContext('2d');
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
