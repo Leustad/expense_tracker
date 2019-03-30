@@ -9,7 +9,7 @@ $(document).ready(function(){
 
         let input_expense = $('<input placeholder="<Expense>" name="items-' + next + '-expense" value="' + v + '" id="expense_' + next + '">')
         let input_cost = $('<input placeholder="Cost" name="items-' + next + '-cost" value="" id="cost_' + next + '">')
-        let input_due_date = $('<input type="date" name="items-' + next + '-due-date" value="' + today + '" id="due_date_' + next + '">')
+        let input_due_date = $('<input type="date" name="items-' + next + '-due_date" value="' + today + '" id="due_date_' + next + '">')
         let input_type = $('<select type="text" id="desc_' + next + '" name="items-' + next + '-desc">')
         let type_option1 = $('<option value="Mutual"/>').text('Mutual');
         let type_option2 = $('<option value="Personal" />').text('Personal');
@@ -185,7 +185,7 @@ $(document).ready(function(){
 
     // Re-index All Fields
     function update_fields(){
-        const re_index_fields = ['row_expense_div', 'expense', 'cost', 'due-date', 'desc', 'del_row', 'br'];
+        const re_index_fields = ['row_expense_div', 'expense', 'cost', 'due_date', 'desc', 'del_row', 'br'];
         $.each(re_index_fields, function(idx, value){
             let ctr = 0;
             $("[id^=" + value + "]").each(function(index, el){
