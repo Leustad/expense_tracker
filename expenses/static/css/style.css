@@ -475,6 +475,18 @@ button[id^=update_]{
 button[id^=update_]:hover{
 	box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
 	opacity: 1;
+	cursor: pointer;
+	animation: pulse 0.8s infinite;
+	animation-timing-function: linear; 
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-shadow: 1px 1px 1px rgba(0,0,0,0.004);
+}
+
+@keyframes pulse {
+	0% { transform: scale(1); }
+	50% { transform: scale(1.1);}
+	100% { transform: scale(1); }
 }
 
 [id^=hist_row_] {
@@ -487,3 +499,27 @@ button[id^=update_]:hover{
 	height: 20px;
 	margin: 2px;
 }
+
+[id^=delete_]{
+	margin-left: 10px;
+	background: #f30b0b;
+	width: 70px;
+	height: 34px;
+	vertical-align: center;
+	box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+	opacity: 0.6;
+	transition: 0.3s;
+}
+
+[id^=delete_]:hover{
+	box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+	opacity: 1;
+	cursor: pointer;
+	animation: shake 75ms infinite;
+	animation-timing-function: linear;
+}
+@keyframes shake {
+	0% { transform: rotate(4deg); }
+	50% { transform: rotate(-2deg); }
+	100% { transform: rotate(4deg); }
+  }

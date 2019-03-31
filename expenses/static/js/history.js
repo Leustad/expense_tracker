@@ -26,6 +26,7 @@ $(document).ready(function () {
             let input_checkbox = $('<input type="checkbox" id="checkbox_' + value.id + '">')
             let span_slider = $('<span class="slider"/>')
             let update_button = $('<button name="update" type="button" style="display: none;" id="update_' + value.id + '"/>')
+            let delete_button = $('<button name="delete" type="button" style="display: none;" id="delete_' + value.id + '"/>')
 
             row_div.append(input_id);
             row_div.append(input_expense);
@@ -36,15 +37,23 @@ $(document).ready(function () {
             label.append(span_slider);
             row_div.append(label);
             row_div.append(update_button);
+            row_div.append(delete_button);
             update_button.text('<< Update')
+            delete_button.text('X Delete')
             history_div.append(row_div);
             // history_div.append('<br>');
 
 
+            $("#delete_" + value.id).click(function (e) {
+                e.preventDefault();
+                let delete_id = $(this).attr('id').split('_')[1]
+                delete_row(delete_id);
+            });
+
             $("#update_" + value.id).click(function (e) {
                 let message = '';
                 e.preventDefault();
-                var update_id = $(this).attr('id').split('_')[1]
+                let update_id = $(this).attr('id').split('_')[1]
                 $.each(fields, function (idx, value) {
                     if ($("[id^=" + value + '_' + update_id + "]").val() != current_data[update_id][value]) {
                         update_data = {
@@ -85,9 +94,11 @@ $(document).ready(function () {
             if ($(this).is(':checked')) {
                 toggle_row(id_value, false);
                 $('#update_' + id_value).css("display", "inline");
+                $('#delete_' + id_value).css("display", "inline");
             } else {
                 toggle_row(id_value, true);
                 $('#update_' + id_value).css("display", "none");
+                $('#delete_' + id_value).css("display", "none");
             }
         });
     }
@@ -137,20 +148,60 @@ $(document).ready(function () {
             url: "/update_history_row",
             type: "POST",
             contentType: 'application/json;charset=UTF-8',
-            data: JSON.stringify(update_data),
+            data: JSON.stringify({
+                'to_date': $('#to_date').val(),
+                'from_date': $('#from_date').val(),
+                'update_data': update_data
+            }),
             success: function (result) {
                 $('#update_' + update_data['update_id']).css("display", "none");
+                $('#delete_' + update_data['update_id']).css("display", "none");
                 toggle_row(update_data['update_id'], true);
                 $('#checkbox_' + update_data['update_id']).prop('checked', false);
                 $('#hist_row_' + update_data['update_id']).animate({backgroundColor: '#2196F3'}, 'slow');
                 $('#hist_row_' + update_data['update_id']).animate({backgroundColor: 'white'}, 'slow');
 
-                // TODO: After updating the row, get the new data and display it in the graph
+                setTimeout(function() {
+                    clear_rows();
+                    populate_history(result.hist_data);
+                    $.getScript('static/js/graph.js', function(){
+                        // Re-Draw the graph
+                        draw_hist_graph(result.graph_yty_data);
+                    });
+                  }, 1000);
             },
             error: function (result) {
                 alert('Server error !!');
             }
         });
     }
+
+    function delete_row(delete_id){
+        $('#hist_row_' + delete_id).animate({backgroundColor: 'red'}, 'slow');
+        $('#hist_row_' + delete_id).animate({backgroundColor: 'white'}, 'slow');
+        $.ajax({
+            url: "/delete_hist_row",
+            type: "POST",
+            contentType: 'application/json;charset=UTF-8',
+            data: JSON.stringify({
+                'to_date': $('#to_date').val(),
+                'from_date': $('#from_date').val(),
+                'row_id': delete_id
+            }),
+            success: function (result) {
+                setTimeout(function() {
+                    clear_rows();
+                    populate_history(result.hist_data);
+                    $.getScript('static/js/graph.js', function(){
+                        // Re-Draw the graph
+                        draw_hist_graph(result.graph_yty_data);
+                    });
+                  }, 1000);
+            },
+            error: function (result) {
+                alert('Server error !!');
+            }
+        });
+    };
 
 });
