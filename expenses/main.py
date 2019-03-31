@@ -23,6 +23,7 @@ def index():
     default_fields = None
     form = ExpensesForm(request.form)
     default_template_name = ''
+    today = datetime.datetime.now()
 
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -37,7 +38,7 @@ def index():
                 db.session.commit()
         return redirect(url_for('main.index'))
     yty_data = {}
-    six_months = helper.get_six_months_data(db, Expense, session)
+    six_months = helper.get_data(db, Expense, session, today)
 
     yty_data = dict([(i.due_date.strftime('%Y%m%d'), []) for i in six_months])
     for i in six_months:
@@ -216,7 +217,8 @@ def update_template():
 @login_required
 def history():
     yty_data = []
-    six_months = helper.get_six_months_data(db, Expense, session)
+    today = datetime.datetime.now()
+    six_months = helper.get_data(db, Expense, session, today)
 
     for i in six_months:
         yty_data.append({'id': i.id,
@@ -234,7 +236,6 @@ def history():
                                                               'expense_type': i.expense_type
                                                               })
 
-    today = datetime.datetime.now()
     from_date = (today - datetime.timedelta(5*365/12)).replace(day=1)
     return render_template('history.html', data=yty_data,
                            graph_yty_data=graph_yty_data,
@@ -250,24 +251,9 @@ def get_history():
         from_date = request.json['from_date']
         hist_data = []
 
-        data = db.session.query(Expense).filter(Expense.due_date >= from_date,
-                                                Expense.due_date <= to_date,
-                                                Expense.user_id == session['user_id']
-                                                ).order_by(Expense.id).all()
-        for i in data:
-            hist_data.append({'id': i.id,
-                              'expense': i.expense,
-                              'cost': i.cost,
-                              'due_date': i.due_date.strftime('%Y-%m-%d'),
-                              'type': i.expense_type})
-
-        graph_data = dict([(i.due_date.strftime('%Y%m%d'), [])
-                           for i in data])
-        for i in data:
-            graph_data[i.due_date.strftime('%Y%m%d')].append({'expense': i.expense,
-                                                              'cost': i.cost,
-                                                              'expense_type': i.expense_type
-                                                              })
+        data = helper.get_data(db, Expense, session, to_date, from_date)
+        hist_data = helper.generate_hist_data(data)
+        graph_data = helper.generate_graph_data(data)
 
         return jsonify(
             {'hist_data': hist_data,
@@ -279,7 +265,10 @@ def get_history():
 @login_required
 def update_history_row():
     if request.method == 'POST':
-        update_data = request.json
+        hist_data = []
+        to_date = request.json['to_date']
+        from_date = request.json['from_date']
+        update_data = request.json['update_data']
         row = Expense.query.filter_by(user_id=session['user_id'],
                                       id=update_data['update_id']
                                       ).first()
@@ -288,7 +277,40 @@ def update_history_row():
         row.due_date = update_data['due_date']
         row.expense_type = update_data['type']
         db.session.commit()
-    return ''
+
+        data = helper.get_data(db, Expense, session, from_date, to_date)
+        hist_data = helper.generate_hist_data(data)
+        graph_data = helper.generate_graph_data(data)
+        
+        return jsonify(
+            {'hist_data': hist_data,
+             'graph_yty_data': graph_data}
+        )
+
+
+@main_blueprint.route('/delete_hist_row', methods=['POST'])
+@login_required
+def delete_hist_row():
+    if request.method == 'POST':
+        to_date = request.json['to_date']
+        from_date = request.json['from_date']
+        row_id = request.json['row_id']
+
+        row = Expense.query.filter_by(user_id=session['user_id'],
+                                id=row_id
+                                ).first()
+
+        print('Deleting: ', row)
+        db.session.delete(row)
+        db.session.commit()
+
+        data = helper.get_data(db, Expense, session, to_date, from_date)
+        hist_data = helper.generate_hist_data(data)
+        graph_data = helper.generate_graph_data(data)
+        return jsonify(
+            {'hist_data': hist_data,
+             'graph_yty_data': graph_data}
+        )
 
 
 @main_blueprint.route('/get_template_fields', methods=['POST'])
