@@ -15,9 +15,16 @@
         {{ form.hidden_tag() }}
         {{ form.email(placeholder='Email') }} <br>
         {{ form.password(placeholder='Password') }} <br>
-        <label for="remember"> Remember me: </label>{{ form.remember }} <br>
+        <div class="remember-me">
+            <label for="remember"> Remember me: </label>{{ form.remember }} <br>
+        </div>
+        <div>
         <button class="login" type="submit">Login</button>
-        <p>Not Have an Account? Click <a href="{{ url_for('main.register') }}">here</a></p>
+            <small>
+                <a href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+            </small>
+        </div>
+        <p>Need an account ? <a href="{{ url_for('main.register') }}">Sign Up Now</a></p>
     </form>
 
 
