@@ -1,12 +1,14 @@
 import datetime
-import json
+import os
 
-from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session
+from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session, flash
 from flask_login import login_required, login_user, current_user, logout_user
+from flask_mail import Message
 
 from expenses.helpers import helper
-from expenses import db, bcrypt, login_manager
-from expenses.forms import ExpensesForm, LoginForm, RegisterForm, AddTemplateFrom, UpdateTemplateFrom
+from expenses import db, bcrypt, login_manager, mail
+from expenses.forms import (ExpensesForm, LoginForm, RegisterForm, AddTemplateFrom, UpdateTemplateFrom,
+                            RequestResetFrom, ResetPasswordFrom)
 from expenses.models import Expense, User, Template
 
 main_blueprint = Blueprint('main', __name__)
@@ -52,7 +54,7 @@ def index():
                                                   ).one()
         default_template_name = default_fields.name
         default_fields = default_fields.template
-        
+
     except Exception as e:
         print(e)
 
@@ -97,6 +99,8 @@ def redirect_dest(fallback):
 
 @main_blueprint.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
     form = LoginForm(request.form)
 
     if form.validate_on_submit():
@@ -114,14 +118,63 @@ def register():
     form = RegisterForm(request.form)
 
     if form.validate_on_submit():
-        new_user = User(username=form.username.data, email=form.email.data,
-                        password=bcrypt.generate_password_hash(
-                            form.password.data).decode('utf-8')
+        new_user = User(username=form.username.data,
+                        email=form.email.data,
+                        password=bcrypt.generate_password_hash(form.password.data).decode('utf-8')
                         )
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for('main.index'))
     return render_template('register.html', form=form)
+
+
+def send_rest_email(user):
+    token = user.get_reset_token()
+    msg = Message('Password Reset Request',
+                  sender=os.environ.get('EMAIL_USERNAME'),
+                  recipients=[user.email]
+                  )
+    msg.body = f'''To reset our password, visit the following link:
+{url_for('main.reset_token', token=token, _external=True)}
+
+
+if you did not make this request, then simply ignore this email and no change will be made
+
+From Expense-Pro Team with Love <3
+'''
+    mail.send(msg)
+
+
+@main_blueprint.route('/reset_password', methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    form = RequestResetFrom(request.form)
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        send_rest_email(user)
+        flash('An email has been sent with instructions to reset your password', 'info')
+        return redirect(url_for('main.login'))
+    return render_template('reset_request.html', title='Reset Password', form=form)
+
+
+@main_blueprint.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('main.index'))
+    user = User.verify_reset_token(token)
+
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('main.reset_request'))
+    form = ResetPasswordFrom()
+    if form.validate_on_submit():
+        hashed_psw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password = hashed_psw
+        db.session.commit()
+        flash('Your password has been updated !! You are now able to login with your new password.')
+        return redirect(url_for('main.login'))
+    return render_template('reset_token.html', title='Reset Password', form=form)
 
 
 @main_blueprint.route('/logout', methods=['GET'])
@@ -147,8 +200,7 @@ def ready_update_template_form(update_template_form, update_fields):
 
 def get_forms(update_fields):
     add_template_form = AddTemplateFrom(request.form, prefix='add_template_')
-    update_template_form = UpdateTemplateFrom(
-        request.form, prefix='update_template_')
+    update_template_form = UpdateTemplateFrom(request.form, prefix='update_template_')
     ready_update_template_form(update_template_form, update_fields)
     return add_template_form, update_template_form
 
@@ -213,6 +265,7 @@ def update_template():
                            add_template_form=add_template_form,
                            update_template_form=update_template_form)
 
+
 @main_blueprint.route('/history', methods=['GET'])
 @login_required
 def history():
@@ -236,7 +289,7 @@ def history():
                                                               'expense_type': i.expense_type
                                                               })
 
-    from_date = (today - datetime.timedelta(5*365/12)).replace(day=1)
+    from_date = (today - datetime.timedelta(5 * 365 / 12)).replace(day=1)
     return render_template('history.html', data=yty_data,
                            graph_yty_data=graph_yty_data,
                            from_date=from_date,
@@ -256,8 +309,8 @@ def get_history():
         graph_data = helper.generate_graph_data(data)
 
         return jsonify(
-            {'hist_data': hist_data,
-             'graph_yty_data': graph_data}
+                {'hist_data': hist_data,
+                 'graph_yty_data': graph_data}
         )
 
 
@@ -281,10 +334,10 @@ def update_history_row():
         data = helper.get_data(db, Expense, session, from_date, to_date)
         hist_data = helper.generate_hist_data(data)
         graph_data = helper.generate_graph_data(data)
-        
+
         return jsonify(
-            {'hist_data': hist_data,
-             'graph_yty_data': graph_data}
+                {'hist_data': hist_data,
+                 'graph_yty_data': graph_data}
         )
 
 
@@ -297,8 +350,8 @@ def delete_hist_row():
         row_id = request.json['row_id']
 
         row = Expense.query.filter_by(user_id=session['user_id'],
-                                id=row_id
-                                ).first()
+                                      id=row_id
+                                      ).first()
 
         print('Deleting: ', row)
         db.session.delete(row)
@@ -308,8 +361,8 @@ def delete_hist_row():
         hist_data = helper.generate_hist_data(data)
         graph_data = helper.generate_graph_data(data)
         return jsonify(
-            {'hist_data': hist_data,
-             'graph_yty_data': graph_data}
+                {'hist_data': hist_data,
+                 'graph_yty_data': graph_data}
         )
 
 
