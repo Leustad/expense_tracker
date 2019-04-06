@@ -1,15 +1,13 @@
-import datetime
 import decimal
 
-from flask import session
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SelectField, FormField, FieldList, PasswordField, BooleanField, \
-    TextAreaField
+    TextAreaField, SubmitField
 from wtforms.fields.html5 import DateField
-from wtforms.validators import DataRequired, InputRequired, Email, Length, ValidationError
+from wtforms.validators import DataRequired, InputRequired, Email, Length, ValidationError, EqualTo
 from wtforms import Form as NoCsrfForm
 
-from expenses.models import Template
+from expenses.models import User
 
 
 def check_numeric(form, field):
@@ -34,13 +32,20 @@ class ExpensesForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(min=4, max=80)])
-    password = PasswordField('password', validators=[InputRequired(), Length(min=8)])
+    email = StringField('email', validators=[InputRequired(),
+                                             Email(message='Invalid email'),
+                                             Length(min=4, max=80)]
+                        )
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8)]
+                             )
     remember = BooleanField('remember me')
 
 
 class RegisterForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(min=4, max=80)])
+    email = StringField('email', validators=[InputRequired(),
+                                             Email(message='Invalid email'),
+                                             Length(min=4, max=80)]
+                        )
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=50)])
     password = PasswordField('password', validators=[InputRequired(), Length(min=8)])
 
@@ -62,14 +67,21 @@ class UpdateTemplateFrom(FlaskForm):
     default = BooleanField('default')
 
 
-# class HistoryItem(NoCsrfForm):
-#     from_date = DateField('from_date', validators=[DataRequired()])
-#     to_date = DateField('to_date', validators=[DataRequired()])
+class RequestResetFrom(FlaskForm):
+    email = StringField('email', validators=[InputRequired(),
+                                             Email(message='Invalid email'),
+                                             Length(min=4, max=80)]
+                        )
+    submit = SubmitField('Request Password Reset')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with that Email. You must register first.')
 
 
-# class MetaHistory(HistoryItem, ExpenseItem):
-#     pass
-
-
-# class HistoryForm(FlaskForm):
-#     items = FieldList(FormField(MetaHistory), min_entries=1)
+class ResetPasswordFrom(FlaskForm):
+    password = PasswordField('password', validators=[InputRequired(), Length(min=8)])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

@@ -5,6 +5,7 @@ from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_mail import Mail
 # from flask_admin import Admin
 # from flask_admin.contrib.sqla import ModelView
 
@@ -16,6 +17,7 @@ print('__APP_SETTINGS__: {}'.format(os.environ['APP_SETTINGS']))
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
+mail = Mail(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'main.login'

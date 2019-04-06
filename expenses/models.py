@@ -1,14 +1,14 @@
-import os, importlib
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+
+from expenses import db, ma
+from expenses.helpers import helper
 
 from flask_login import UserMixin
 
-from expenses import db, ma, config
 
-class Schema():
-    region_config = config.os.environ['APP_SETTINGS'].split('.')[2]
-    print(f'Running with: {region_config}')
-    class_ = getattr(config, region_config)
-    schema_name = class_.SCHEMA
+class Schema(object):
+    schema_name = helper.get_region_class().SCHEMA
+
 
 class User(UserMixin, db.Model):
     __tabelname__ = 'user'
@@ -21,6 +21,19 @@ class User(UserMixin, db.Model):
 
     template = db.relationship('Template', backref='user')
     expense = db.relationship('Expense', backref='user')
+
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(helper.get_region_class().SECRET_KEY, expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(helper.get_region_class().SECRET_KEY)
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
 
 
 class Template(db.Model):

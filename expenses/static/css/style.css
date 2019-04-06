@@ -182,7 +182,7 @@ table th {
 }
 
 .form-horizontal .add-more,
-.form-horizontal .delete-row {
+.form-horizontal .delete-row{
 	display: inline-block;
 	cursor: pointer;
 	color: #ffffff;
@@ -265,7 +265,9 @@ table th {
 .update-template-btn,
 .add-template-btn,
 .login,
-.register {
+.register,
+.reset-password,
+.request_reset{
 	-moz-box-shadow: 0px 0px 0px 2px #9fb4f2;
 	-webkit-box-shadow: 0px 0px 0px 2px #9fb4f2;
 	box-shadow: 0px 0px 0px 2px #9fb4f2;
@@ -295,7 +297,9 @@ table th {
 .update-template-btn:hover,
 .add-template-btn:hover,
 .login:hover,
-.register:hover {
+.register:hover,
+.reset-password:hover,
+.request_reset:hover{
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #476e9e), color-stop(1, #7892c2));
 	background: -moz-linear-gradient(top, #476e9e 5%, #7892c2 100%);
 	background: -webkit-linear-gradient(top, #476e9e 5%, #7892c2 100%);
@@ -377,6 +381,7 @@ update_template_default {
 
 #email,
 #password,
+#confirm_password,
 #username {
 	width: 300px;
 	height: 40px;
