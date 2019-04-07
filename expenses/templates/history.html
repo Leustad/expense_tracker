@@ -16,12 +16,10 @@
     <div id="history_data">
     </div>
     <div id="history_graph">
-        <input type="radio" id="bar_radio_btn" name="graph_type" value="bar" 
-            onclick="draw_hist_graph(all_data, $(this).val());" checked>
+        <input type="radio" id="bar_radio_btn" name="graph_type" value="bar" checked>
         <label for="bar_radio_btn">Bar Graph</label>
         <span>---</span>
-        <input type="radio" id="line_radio_btn" name="graph_type"
-            onclick="draw_hist_graph(all_data, $(this).val());" value="line">
+        <input type="radio" id="line_radio_btn" name="graph_type" value="line">
         <label for="line_radio_btn">Line Graph</label>
         <canvas id="chart"></canvas>
     </div>
