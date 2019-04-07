@@ -2,6 +2,9 @@ $(document).ready(function () {
     var data = hist_data;
     var fields = ['expense', 'cost', 'due_date', 'type'];
     var history_div = $("#history_data");
+    var data_to_draw_with = all_data;
+
+    let default_graph_type = $("input[name='graph_type']:checked").val();
 
     function sanitize(data) {
         var output = data.replace(/<script[^>]*?>.*?<\/script>/gi, '').
@@ -10,6 +13,15 @@ $(document).ready(function () {
         replace(/<![\s\S]*?--[ \t\n\r]*>/gi, '');
         return output;
     }
+
+    $('input:radio[name="graph_type"]').change(
+        function(){
+            let graph_type = $(this).val();
+            if( graph_type != default_graph_type){
+                draw_hist_graph(data_to_draw_with, graph_type);
+                default_graph_type = graph_type;
+            }
+        })
 
     populate_history(data);
 
@@ -112,12 +124,12 @@ $(document).ready(function () {
         })
     }
 
-    // Emply out the history page
+    // Empty out the history page
     function clear_rows() {
         $('#history_data').empty();
     };
 
-    // Get the new history data per passed in dates
+    // Get the new history data per passed-in dates
     $("#hist_btn").click(function (e) {
         e.preventDefault();
         $.ajax({
@@ -131,10 +143,8 @@ $(document).ready(function () {
             success: function (result) {
                 clear_rows();
                 populate_history(result.hist_data);
-                $.getScript('static/js/graph.js', function(){
-                    // Re-Draw the graph
-                    draw_hist_graph(result.graph_yty_data);
-                });
+                data_to_draw_with = result.graph_yty_data;
+                draw_hist_graph(result.graph_yty_data);
             },
             error: function (result) {
                 console.log('Server error !! Can\'t get the history data');
@@ -164,10 +174,10 @@ $(document).ready(function () {
                 setTimeout(function() {
                     clear_rows();
                     populate_history(result.hist_data);
-                    $.getScript('static/js/graph.js', function(){
-                        // Re-Draw the graph
-                        draw_hist_graph(result.graph_yty_data);
-                    });
+                    console.log(result.hist_data);
+                    // Re-Draw the graph
+                    data_to_draw_with = result.graph_yty_data;
+                    draw_hist_graph(data_to_draw_with);
                   }, 1000);
             },
             error: function (result) {
@@ -192,10 +202,9 @@ $(document).ready(function () {
                 setTimeout(function() {
                     clear_rows();
                     populate_history(result.hist_data);
-                    $.getScript('static/js/graph.js', function(){
-                        // Re-Draw the graph
-                        draw_hist_graph(result.graph_yty_data);
-                    });
+                    // Re-Draw the graph
+                    data_to_draw_with = result.graph_yty_data
+                    draw_hist_graph(data_to_draw_with);
                   }, 1000);
             },
             error: function (result) {

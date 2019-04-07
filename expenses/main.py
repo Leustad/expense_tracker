@@ -325,13 +325,13 @@ def update_history_row():
         row = Expense.query.filter_by(user_id=session['user_id'],
                                       id=update_data['update_id']
                                       ).first()
-        row.expese = update_data['expense']
+        row.expense = update_data['expense']
         row.cost = update_data['cost']
         row.due_date = update_data['due_date']
         row.expense_type = update_data['type']
         db.session.commit()
 
-        data = helper.get_data(db, Expense, session, from_date, to_date)
+        data = helper.get_data(db, Expense, session, to_date, from_date)
         hist_data = helper.generate_hist_data(data)
         graph_data = helper.generate_graph_data(data)
 
