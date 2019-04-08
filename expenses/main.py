@@ -107,9 +107,11 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember.data)
+            user.last_login = datetime.datetime.now()
+            db.session.commit()
             return redirect_dest(fallback=url_for('main.index'))
 
-        return '<h1>Bad Creds</h1>'
+        flash('Invalid/Wrong Credentials. Please try again.')
     return render_template('login.html', form=form)
 
 

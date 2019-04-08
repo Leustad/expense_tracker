@@ -18,6 +18,7 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(50), unique=False)
     email = db.Column(db.String(80), unique=True)
     password = db.Column(db.String())
+    last_login = db.Column(db.DateTime)
 
     template = db.relationship('Template', backref='user')
     expense = db.relationship('Expense', backref='user')
