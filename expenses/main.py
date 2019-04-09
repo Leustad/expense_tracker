@@ -8,7 +8,7 @@ from flask_mail import Message
 from expenses.helpers import helper
 from expenses import db, bcrypt, login_manager, mail
 from expenses.forms import (ExpensesForm, LoginForm, RegisterForm, AddTemplateFrom, UpdateTemplateFrom,
-                            RequestResetFrom, ResetPasswordFrom)
+                            RequestResetFrom, ResetPasswordFrom, RequestActivationForm)
 from expenses.models import Expense, User, Template
 
 main_blueprint = Blueprint('main', __name__)
@@ -26,6 +26,11 @@ def index():
     form = ExpensesForm(request.form)
     default_template_name = ''
     today = datetime.datetime.now()
+
+    user = User.query.filter_by(id=session['user_id']).first()
+
+    if not helper.is_user_active(user):
+        return redirect(url_for('main.request_activation'))
 
     if request.method == 'POST':
         if form.validate_on_submit():
@@ -64,6 +69,36 @@ def index():
                            expenses=yty_data, name=current_user.username,
                            default_fields=default_fields, template_names=template_names,
                            default_template_name=default_template_name)
+
+
+@main_blueprint.route('/request_activation', methods=['GET', 'POST'])
+@login_required
+def request_activation():
+    form = RequestActivationForm(request.form)
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user.active:
+            flash('Account Already Active. No Need to re-activate')
+            return redirect(url_for('main.index'))
+        send_activation_email(user)
+        flash(f'Activation Email has been sent to {user.email}. Please don\'t forget to check your spam folder')
+    else:
+        return render_template('request_activation.html', form=form, title='Request Activation')
+
+
+@main_blueprint.route('/request_activation/<token>', methods=['GET', 'POST'])
+@login_required
+def activate_account(token):
+    user = User.verify_token(token, salt='email-activation-token')
+
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('main.request_activation'))
+    else:
+        user.active = True
+        db.session.commit()
+        flash('Your Account has been Activated !! You are now able to login.')
+        return redirect(url_for('main.login'))
 
 
 @main_blueprint.route('/get_template_data', methods=['POST'])
@@ -130,8 +165,25 @@ def register():
     return render_template('register.html', form=form)
 
 
-def send_rest_email(user):
-    token = user.get_reset_token()
+def send_activation_email(user):
+    token = user.get_token(salt='email-activation-token')
+    msg = Message('Account Activation Request',
+                  sender=os.environ.get('EMAIL_USERNAME'),
+                  recipients=[user.email]
+                  )
+    msg.body = f'''To activate your account, please visit the following link:
+{url_for('main.request_activation', token=token, _external=True)}
+
+
+if you did not make this request, then simply ignore this email and no change will be made
+
+From Expense-Pro Team with Love <3
+'''
+    mail.send(msg)
+
+
+def send_reset_email(user):
+    token = user.get_token(salt='password-reset-token')
     msg = Message('Password Reset Request',
                   sender=os.environ.get('EMAIL_USERNAME'),
                   recipients=[user.email]
@@ -154,7 +206,7 @@ def reset_request():
     form = RequestResetFrom(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        send_rest_email(user)
+        send_reset_email(user)
         flash('An email has been sent with instructions to reset your password', 'info')
         return redirect(url_for('main.login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
@@ -164,7 +216,7 @@ def reset_request():
 def reset_token(token):
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    user = User.verify_reset_token(token)
+    user = User.verify_token(token, salt='password-reset-token')
 
     if user is None:
         flash('That is an invalid or expired token', 'warning')

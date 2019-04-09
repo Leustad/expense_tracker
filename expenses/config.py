@@ -17,7 +17,7 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    FLASK_ENV = 'production'
+    ENV = 'production'
     db_url = os.environ['HEROKU_POSTGRESQL_GREEN_URL'] if os.environ.get('HEROKU_POSTGRESQL_GREEN_URL') else None
     SQLALCHEMY_DATABASE_URI = f'{db_url}'
     SCHEMA = 'snowy'
@@ -36,7 +36,7 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
-    FLASK_ENV = 'testing'
+    ENV = 'testing'
     TESTING = True
     SQLALCHEMY_DATABASE_URI = f'postgresql://postgres:{Config.PSW}@main-pi/expenses'
     SCHEMA = 'snowy_test'

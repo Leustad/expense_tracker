@@ -40,3 +40,8 @@ def generate_graph_data(data):
 def get_region_class():
     region_config = config.os.environ['APP_SETTINGS'].split('.')[2]
     return getattr(config, region_config)
+
+
+def is_user_active(user):
+    if user.active:
+        return True
