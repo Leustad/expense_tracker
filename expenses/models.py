@@ -24,15 +24,15 @@ class User(UserMixin, db.Model):
     template = db.relationship('Template', backref='user')
     expense = db.relationship('Expense', backref='user')
 
-    def get_reset_token(self, expires_sec=1800):
+    def get_token(self, salt, expires_sec=1800):
         s = Serializer(helper.get_region_class().SECRET_KEY, expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
+        return s.dumps({'user_id': self.id}, salt=f'{salt}').decode('utf-8')
 
     @staticmethod
-    def verify_reset_token(token):
+    def verify_token(token, salt):
         s = Serializer(helper.get_region_class().SECRET_KEY)
         try:
-            user_id = s.loads(token)['user_id']
+            user_id = s.loads(token, salt=f'{salt}')['user_id']
         except:
             return None
         return User.query.get(user_id)
