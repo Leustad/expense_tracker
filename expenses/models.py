@@ -28,14 +28,6 @@ class User(UserMixin, db.Model):
         s = Serializer(helper.get_region_class().SECRET_KEY, expires_sec)
         return s.dumps({'user_id': self.id}, salt=f'{salt}').decode('utf-8')
 
-    # def get_reset_token(self, expires_sec=1800):
-    #     s = Serializer(helper.get_region_class().SECRET_KEY, expires_sec)
-    #     return s.dumps({'user_id': self.id}, salt='password-reset-token').decode('utf-8')
-    #
-    # def get_activation_token(self, expires_sec=1800):
-    #     s = Serializer(helper.get_region_class().SECRET_KEY, expires_sec)
-    #     return s.dumps({'user_id': self.id}, salt='email-activation-token').decode('utf-8')
-
     @staticmethod
     def verify_token(token, salt):
         s = Serializer(helper.get_region_class().SECRET_KEY)
@@ -44,15 +36,6 @@ class User(UserMixin, db.Model):
         except:
             return None
         return User.query.get(user_id)
-
-    # @staticmethod
-    # def verify_activation_token(token):
-    #     s = Serializer(helper.get_region_class().SECRET_KEY)
-    #     try:
-    #         user_id = s.loads(token, salt='email-activation-token')['user_id']
-    #     except:
-    #         return None
-    #     return User.query.get(user_id)
 
 
 class Template(db.Model):
