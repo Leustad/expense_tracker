@@ -85,3 +85,16 @@ class ResetPasswordFrom(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+
+class RequestActivationForm(FlaskForm):
+    email = StringField('email', validators=[InputRequired(),
+                                             Email(message='Invalid email'),
+                                             Length(min=4, max=80)]
+                        )
+    submit = SubmitField('Request Account Activation')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('There is no account with that Email. You must register first.')

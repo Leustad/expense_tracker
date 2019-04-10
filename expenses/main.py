@@ -1,14 +1,13 @@
 import datetime
-import os
 
 from flask import render_template, redirect, url_for, request, Blueprint, jsonify, session, flash
 from flask_login import login_required, login_user, current_user, logout_user
-from flask_mail import Message
 
 from expenses.helpers import helper
-from expenses import db, bcrypt, login_manager, mail
+from expenses import db, bcrypt, login_manager
 from expenses.forms import (ExpensesForm, LoginForm, RegisterForm, AddTemplateFrom, UpdateTemplateFrom,
-                            RequestResetFrom, ResetPasswordFrom)
+                            RequestResetFrom, ResetPasswordFrom, RequestActivationForm)
+from expenses.helpers.helper import active_required
 from expenses.models import Expense, User, Template
 
 main_blueprint = Blueprint('main', __name__)
@@ -20,6 +19,7 @@ def get_user_id():
 
 @main_blueprint.route('/', methods=['GET', 'POST'])
 @login_required
+@active_required
 def index():
     template_names = []
     default_fields = None
@@ -64,6 +64,43 @@ def index():
                            expenses=yty_data, name=current_user.username,
                            default_fields=default_fields, template_names=template_names,
                            default_template_name=default_template_name)
+
+
+@main_blueprint.route('/request_activation', methods=['GET', 'POST'])
+@login_required
+def request_activation():
+    form = RequestActivationForm(request.form)
+    if request.method == 'POST' and form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user.active:
+            flash('Account Already Active. No Need to re-activate')
+            return redirect(url_for('main.index'))
+        helper.send_activation_email(user)
+        flash(f'Activation Email has been sent to {user.email}. Please don\'t forget to check your spam folder')
+        return render_template('info.html',
+                               title='Info',
+                               msg='Account Activation has been Requested.'
+                               )
+    else:
+        return render_template('request_activation.html', form=form, title='Request Activation')
+
+
+@main_blueprint.route('/request_activation/<token>', methods=['GET', 'POST'])
+@login_required
+def activate_account(token):
+    user = User.verify_token(token, salt='email-activation-token')
+
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('main.request_activation'))
+    else:
+        user.active = True
+        db.session.commit()
+        flash('Your Account has been Activated !! You are now able to login.')
+        return render_template('info.html',
+                               title='Account Activated',
+                               msg='Your Account has been activated'
+                               )
 
 
 @main_blueprint.route('/get_template_data', methods=['POST'])
@@ -126,25 +163,9 @@ def register():
                         )
         db.session.add(new_user)
         db.session.commit()
+        flash('Please check your email for an activation link', 'info')
         return redirect(url_for('main.index'))
     return render_template('register.html', form=form)
-
-
-def send_rest_email(user):
-    token = user.get_reset_token()
-    msg = Message('Password Reset Request',
-                  sender=os.environ.get('EMAIL_USERNAME'),
-                  recipients=[user.email]
-                  )
-    msg.body = f'''To reset our password, visit the following link:
-{url_for('main.reset_token', token=token, _external=True)}
-
-
-if you did not make this request, then simply ignore this email and no change will be made
-
-From Expense-Pro Team with Love <3
-'''
-    mail.send(msg)
 
 
 @main_blueprint.route('/reset_password', methods=['GET', 'POST'])
@@ -154,7 +175,7 @@ def reset_request():
     form = RequestResetFrom(request.form)
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        send_rest_email(user)
+        helper.send_reset_email(user)
         flash('An email has been sent with instructions to reset your password', 'info')
         return redirect(url_for('main.login'))
     return render_template('reset_request.html', title='Reset Password', form=form)
@@ -164,7 +185,7 @@ def reset_request():
 def reset_token(token):
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    user = User.verify_reset_token(token)
+    user = User.verify_token(token, salt='password-reset-token')
 
     if user is None:
         flash('That is an invalid or expired token', 'warning')
@@ -194,8 +215,7 @@ def ready_update_template_form(update_template_form, update_fields):
         (i.name, i.name) for i in _templates()]
 
     if update_fields:
-        template_list = [i.template for i in _templates() if i.name == _templates()[
-            0].name]
+        template_list = [i.template for i in _templates() if i.name == _templates()[0].name]
         template_list = ', '.join(map(str, template_list))
         update_template_form.fields.data = template_list
 
@@ -209,6 +229,7 @@ def get_forms(update_fields):
 
 @main_blueprint.route('/template', methods=['GET'])
 @login_required
+@active_required
 def template():
     add_template_form, update_template_form = get_forms(update_fields=True)
     return render_template('template.html',
@@ -218,14 +239,15 @@ def template():
 
 @main_blueprint.route('/add_template', methods=['POST'])
 @login_required
+@active_required
 def add_template():
     add_template_form, update_template_form = get_forms(update_fields=True)
     if request.method == 'POST' and add_template_form.validate_on_submit():
         template_name = Template.query.filter_by(id=session['user_id'],
                                                  name=add_template_form.name.data
                                                  ).first()
+        # If template name doesn't exists
         if not template_name:
-            ''' If a new template'''
 
             if add_template_form.default.data:
                 deselect_default()
@@ -237,6 +259,7 @@ def add_template():
                                     )
             db.session.add(new_template)
             db.session.commit()
+            return redirect(url_for('main.template'))
     return render_template('template.html',
                            add_template_form=add_template_form,
                            update_template_form=update_template_form)
@@ -244,6 +267,7 @@ def add_template():
 
 @main_blueprint.route('/update_template', methods=['POST'])
 @login_required
+@active_required
 def update_template():
     add_template_form, update_template_form = get_forms(update_fields=False)
 
@@ -260,6 +284,7 @@ def update_template():
 
         # db.session.add(template_row)
         db.session.commit()
+        return redirect(url_for('main.template'))
     for fieldName, errorMessages in update_template_form.errors.items():
         for err in errorMessages:
             print(err)
@@ -270,6 +295,7 @@ def update_template():
 
 @main_blueprint.route('/history', methods=['GET'])
 @login_required
+@active_required
 def history():
     yty_data = []
     today = datetime.datetime.now()
@@ -300,6 +326,7 @@ def history():
 
 @main_blueprint.route('/get_history', methods=['POST'])
 @login_required
+@active_required
 def get_history():
     if request.method == 'POST':
         to_date = request.json['to_date']
@@ -318,6 +345,7 @@ def get_history():
 
 @main_blueprint.route('/update_history_row', methods=['POST'])
 @login_required
+@active_required
 def update_history_row():
     if request.method == 'POST':
         hist_data = []
@@ -345,6 +373,7 @@ def update_history_row():
 
 @main_blueprint.route('/delete_hist_row', methods=['POST'])
 @login_required
+@active_required
 def delete_hist_row():
     if request.method == 'POST':
         to_date = request.json['to_date']
@@ -370,6 +399,7 @@ def delete_hist_row():
 
 @main_blueprint.route('/get_template_fields', methods=['POST'])
 @login_required
+@active_required
 def get_fields():
     template_name = request.json['template_name']
     template_row = Template.query.filter_by(name=template_name,
