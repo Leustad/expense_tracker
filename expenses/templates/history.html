@@ -6,29 +6,54 @@
 {% endblock %}
 
 {% block content %}
-<div class="form-horizontal history_page">
-    <div class="history_dates">
-        From: <input id="from_date" type="date" value={{ from_date.strftime('%Y-%m-%d') }}>
-        To: <input id="to_date" type="date" value={{ to_date.strftime('%Y-%m-%d') }}>
-        <button id="hist_btn" class="btn btn-info add-more" type="button">GO</button>
+
+<div class="container-fluid">
+    <form class="form-inline py-3">
+        <label class="sr-only" for="from_date">From:</label>
+        <input id="from_date" class="form-control" type="date" value={{ from_date.strftime('%Y-%m-%d') }}>
+
+        <label class="sr-only" for="to_date">To:</label>
+        <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+            <input id="to_date" class="form-control" type="date" value={{ to_date.strftime('%Y-%m-%d') }}>
+        </div>
+
+        <button id="hist_btn" class="btn btn-primary" type="button">GO</button>
+    </form>
+</div>
+<div class="history_dates text-center">
+
+</div>
+<hr>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6">
+            <div id="history_data">
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div id="history_graph" class="text-center">
+                <input type="radio" id="bar_radio_btn" name="graph_type" value="bar" checked>
+                <label for="bar_radio_btn">Bar Graph</label>
+                <span>---</span>
+                <input type="radio" id="line_radio_btn" name="graph_type" value="line">
+                <label for="line_radio_btn">Line Graph</label>
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
     </div>
 
-    <div id="history_data">
-    </div>
-    <div id="history_graph">
-        <input type="radio" id="bar_radio_btn" name="graph_type" value="bar" checked>
-        <label for="bar_radio_btn">Bar Graph</label>
-        <span>---</span>
-        <input type="radio" id="line_radio_btn" name="graph_type" value="line">
-        <label for="line_radio_btn">Line Graph</label>
-        <canvas id="chart"></canvas>
-    </div>
-    <!-- <hr> -->
 </div>
+
 <script>
     var hist_data = ({{ data|safe }});
     var all_data = ({{  graph_yty_data|safe }});
     var ctx = document.getElementById("chart").getContext('2d');
+
+
+
+
+
+
 </script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/history.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>

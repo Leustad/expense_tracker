@@ -52,4 +52,44 @@
         <p>Back to <a href="{{ url_for('main.login') }}">login</a> page !!</p>
     </form>
 </div>
+
+
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Login Form -->
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div id="from-header">
+                <p>New Password</p>
+            </div>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class=flashes>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+
+            {{ form.password(placeholder='password', class="form-control fadeIn first") }}
+            {{ form.confirm_password(placeholder='confirm password', class="form-control fadeIn second") }}
+
+            <div>
+                {% for error in form.confirm_password.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+            </div>
+
+            <input type="submit" class="fadeIn second" value="Reset Password">
+            <div>
+                <a class="underlineHover" href="{{ url_for('main.register') }}">Register</a>
+            </div>
+        </form>
+        <!-- Remind Passowrd -->
+        <div id="form-footer">
+            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+        </div>
+    </div>
+</div>
 {% endblock %}

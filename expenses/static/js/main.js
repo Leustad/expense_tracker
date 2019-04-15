@@ -1,29 +1,63 @@
 $(document).ready(function(){
+    $('.home').addClass('active');
     var next = 0;
     const today = new Date().toISOString().split('T')[0];
     const fields = ['expense', 'cost', 'due_date', 'desc'];
-    const expense_div = $('#all_expense_div');
+    const form_anchor = $('.form_anchor');
+
+//    $(".col-lg-2").each(function(){
+//        $(this).remove();
+//    });
+//    $('.form-row').removeClass("form-row align-items-center");
 
     function add_row(v, next){
-        const expense_row = $('<div id="row_expense_div_' + next + '"/>')
+//        const expense_row = $('<div id="row_expense_div_' + next + '"/>')
 
-        let input_expense = $('<input placeholder="<Expense>" name="items-' + next + '-expense" value="' + v + '" id="expense_' + next + '">')
-        let input_cost = $('<input placeholder="Cost" name="items-' + next + '-cost" value="" id="cost_' + next + '">')
-        let input_due_date = $('<input type="date" name="items-' + next + '-due_date" value="' + today + '" id="due_date_' + next + '">')
-        let input_type = $('<select type="text" id="desc_' + next + '" name="items-' + next + '-desc">')
+        let form_row = $('<div class="row" id=row_expense_div_' + next + '/>');
+        let form_group1 = $('<div class="form-group col-lg-2"/>');
+        let form_group2 = $('<div class="form-group col-lg-2"/>');
+        let form_group3 = $('<div class="form-group col-lg-3"/>');
+        let form_group4 = $('<div class="form-group col-lg-2"/>');
+        let form_group5 = $('<div class="form-group col-lg-1"/>');
+        let form_group6 = $('<div class="form-group col-lg-2"/>');
+
+        let input_expense = $('<input class="form-control" placeholder="<Expense>" name="items-' + next + '-expense" value="' + v + '" id="expense_' + next + '">')
+        let input_cost = $('<input class="form-control" placeholder="Cost" name="items-' + next + '-cost" value="" id="cost_' + next + '">')
+        let input_due_date = $('<input class="form-control" type="date" name="items-' + next + '-due_date" value="' + today + '" id="due_date_' + next + '">')
+        let input_type = $('<select class="form-control" type="text" id="desc_' + next + '" name="items-' + next + '-desc">')
         let type_option1 = $('<option value="Mutual"/>').text('Mutual');
         let type_option2 = $('<option value="Personal" />').text('Personal');
 
-        let del_row_btn = $('<button id="del_row_' + next + '" class="btn btn-secondary delete-row" type="button">-</button>');
+        let del_row_btn = $('<button id="del_row_' + next + '" class="btn btn-outline-danger delete-row" type="button">-</button>');
 
-        expense_row.append(input_expense);
-        expense_row.append(input_cost);
-        expense_row.append(input_due_date);
-        expense_row.append(input_type);
-        expense_row.append(del_row_btn);
+        form_group1.append(input_expense);
+        form_row.append(form_group1);
+        form_anchor.append(form_row);
+
+        form_group2.append(input_cost);
+        form_row.append(form_group2);
+        form_anchor.append(form_row);
+
+        form_group3.append(input_due_date);
+        form_row.append(form_group3);
+        form_anchor.append(form_row);
+
+        form_group4.append(input_type);
+        form_row.append(form_group4);
+        form_anchor.append(form_row);
+
+        form_group5.append(del_row_btn);
+        form_row.append(form_group5);
+        form_anchor.append(form_row);
+
+        form_group5.append("");
+        form_row.append(form_group6);
+        form_anchor.append(form_row);
+
+//        expense_row.append(form_row);
         input_type.text("Mutual");
 
-        expense_div.append(expense_row);
+
         input_type.append(type_option1);
         input_type.append(type_option2);
         input_expense.css({'font-weight': 'bold'});
@@ -39,10 +73,11 @@ $(document).ready(function(){
     // Default_fields
     if (default_fields){       
         // remove the existing row
-        $("[id^=cost]").remove();
-        $("[id^=expense]").remove();
-        $("[id^=due_date]").remove();
-        $("[id^=desc]").remove();
+//        $("[id^=cost]").remove();
+//        $("[id^=expense]").remove();
+//        $("[id^=due_date]").remove();
+//        $("[id^=desc]").remove();
+        $('.form_anchor div.row').remove();
 
         // Add rows per default fields
         default_fields = default_fields.split(', ');
@@ -50,15 +85,16 @@ $(document).ready(function(){
             add_row(v, next);
             next += 1;
         });
-        $("[id^=del_row_]").last().remove();
+//        $("[id^=del_row_]").last().remove();
         $('.add-more').remove();
-        $("[id^=row_expense_div_]").last().append($('<button id="add_row_btn" class="btn btn-info add-more" type="button">+</button>'));
+        $('.col-lg-2').last().append($('<button id="add_row_btn" class="btn btn-primary add-more" type="button">+</button>'));
+//        $("[id^=row_expense_div_]").last().append();
         update_fields();
     }
 
     function delete_rows(value){
         if (value == 'all'){
-            $('#all_expense_div').html('');
+            $('.form_anchor .row').remove();
         }else{
             $("#row_expense_div_" + value).remove();
         }
@@ -68,32 +104,33 @@ $(document).ready(function(){
     // Change Template
     if (templates){
         let avail_templates = $('#avail_templates');
-        let temp = $('<option value="None"/>');
-        temp.text('None')
-        avail_templates.append(temp);
+        let temp = $('<button class="dropdown-item list_template" type="button"/>');
+        temp.text('None');
+        $(avail_templates).append(temp);
 
         $.each(templates, function(idx, value){
-            let template_option = $('<option value="' + value + '" />');
+            let template_option = $('<button class="dropdown-item list_template" type="button"/>');
             template_option.text(value);
-            avail_templates.append(template_option)
+            $(avail_templates).append(template_option)
         })
-        // Set selected template name to the defaul template name
+        // Set selected template name to the default template name
         $('#avail_templates').val(default_template_name);
     }else{
-        let template_option = $('<option value="None"/>');
+        let template_option = $('<button class="dropdown-item list_template" type="button"/>');
         template_option.text('None');
         avail_templates.append(template_option)
     };
     
     // Get Changed Template data
-    $('#avail_templates').change(function () {
-        let selected_template = this.value;
+    $('.list_template').click(function () {
+        let selected_template = $(this).text();
+        console.log(selected_template);
         let clone_add_row = $('#add_row_btn').clone(true, true);  //Therefore we keep the event handlers
         if (selected_template === 'None') {
             delete_rows('all');
             next = 0;
             add_row('', next);
-            clone_add_row.appendTo($("[id^=row_expense_div_]").last());
+            clone_add_row.appendTo($('.col-lg-2').last());
         }else{
             $.ajax({
                 url: "/get_template_data",
@@ -107,7 +144,7 @@ $(document).ready(function(){
                         add_row(value, next);
                         next += 1;
                     })
-                    clone_add_row.appendTo($("[id^=row_expense_div_]").last());
+                    clone_add_row.appendTo($('.col-lg-2').last());
                 },
                 error: function (result) {
                     console.log('Server error !! Can\'t Get Template Data');
@@ -126,7 +163,7 @@ $(document).ready(function(){
         add_row(v='', next);
         let clone_add_row = $('#add_row_btn').clone(true, true);  //Therefore we keep the event handlers
         $('#add_row_btn').remove();
-        clone_add_row.appendTo($("[id^=row_expense_div_]").last());
+        clone_add_row.appendTo($('.col-lg-2').last());
 
         $('#desc_' + next).on('change', function(){
             edit_totals(get_totals());
