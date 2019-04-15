@@ -1,41 +1,48 @@
 {% extends '_base.html' %}
 
 {% block title %}
-   | {{ title }}
+| {{ title }}
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signin.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="register-div">
-    <form class="form-signin" method="POST" action="">
-        <h2 class="form-signin-heading">Reset Password</h2>
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div id="from-header">
+                <p>Password Reset Request</p>
+            </div>
             {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                <ul class=flashes>
+            {% if messages %}
+            <ul class=flashes>
                 {% for message in messages %}
-                  <li>{{ message }}</li>
+                <li>{{ message }}</li>
                 {% endfor %}
-                </ul>
-              {% endif %}
+            </ul>
+            {% endif %}
             {% endwith %}
-        {{ form.hidden_tag() }}
-        {% if form.email.errors %}
-            {{ form.email(class='form-control') }}
-            <div class="Invalid-feedback">
+
+            {{ form.email(placeholder='Email', class="form-control fadeIn second") }}
+
+            <div>
                 {% for error in form.email.errors %}
-                <span>{{ error }}</span>
+                <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
-        {% else %}
-            {{ form.email(placeholder='Email', class="form-control") }}
-        {% endif %}
-        <br>
-        <br>
-        {{ form.submit(class="request_reset") }}<br>
-        <p>Back to <a href="{{ url_for('main.login') }}">login</a> page !!</p>
-    </form>
+
+            <input type="submit" class="fadeIn third" value="Reset Password">
+            <div>
+                <a class="underlineHover" href="{{ url_for('main.register') }}">Register</a>
+            </div>
+        </form>
+        <!-- Remind Passowrd -->
+        <div id="form-footer">
+            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

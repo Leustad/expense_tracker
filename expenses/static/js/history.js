@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    $('.history').addClass('active');
     var data = hist_data;
     var fields = ['expense', 'cost', 'due_date', 'type'];
     var history_div = $("#history_data");
@@ -28,32 +29,48 @@ $(document).ready(function () {
     function populate_history(hist_data) {
         current_data = {};
         $.each(hist_data, function (idx, value) {
-            let row_div = $('<div id="hist_row_' + value.id + '"/>')
-            let input_id = $('<input type=hidden value="' + value.id + '" id="' + value.id + '">')
-            let input_expense = $('<input value="' + value.expense + '" id="expense_' + value.id + '">')
-            let input_cost = $('<input value="' + value.cost + '" id="cost_' + value.id + '">')
-            let input_due_date = $('<input type="date" value="' + value.due_date + '" id="due_date_' + value.id + '">')
-            let input_type = $('<input value="' + value.type + '" id="type_' + value.id + '">')
-            let label = $('<label class="switch"/>')
-            let input_checkbox = $('<input type="checkbox" id="checkbox_' + value.id + '">')
-            let span_slider = $('<span class="slider"/>')
-            let update_button = $('<button name="update" type="button" style="display: none;" id="update_' + value.id + '"/>')
-            let delete_button = $('<button name="delete" type="button" style="display: none;" id="delete_' + value.id + '"/>')
+            let history_group1 = $('<div class="form-group col-lg-2"/>');
+            let history_group2 = $('<div class="form-group col-lg-2"/>');
+            let history_group3 = $('<div class="form-group col-lg-2"/>');
+            let history_group4 = $('<div class="form-group col-lg-2"/>');
+            let history_group5 = $('<div class="form-group col-lg-2"/>');
+            let history_group6 = $('<div class="form-group col-lg-2"/>');
 
-            row_div.append(input_id);
-            row_div.append(input_expense);
-            row_div.append(input_cost);
-            row_div.append(input_due_date);
-            row_div.append(input_type);
+
+            let row_div = $('<div class="form-row" id="hist_row_' + value.id + '"/>')
+
+            let input_id = $('<input class="form-control" type=hidden value="' + value.id + '" id="' + value.id + '">')
+            let input_expense = $('<input class="form-control" value="' + value.expense + '" id="expense_' + value.id + '">')
+            let input_cost = $('<input class="form-control" value="' + value.cost + '" id="cost_' + value.id + '">')
+            let input_due_date = $('<input class="form-control" type="date" value="' + value.due_date + '" id="due_date_' + value.id + '">')
+            let input_type = $('<input class="form-control" value="' + value.type + '" id="type_' + value.id + '">')
+            let label = $('<label class="switch"/>')
+            let input_checkbox = $('<input class="form-control" type="checkbox" id="checkbox_' + value.id + '">')
+            let span_slider = $('<span class="slider"/>')
+            let update_button = $('<button name="update" class="btn btn-primary update-button" type="button" style="display: none;" id="update_' + value.id + '"/>')
+            let delete_button = $('<button name="delete" class="btn btn-outline-danger delete-button" type="button" style="display: none;" id="delete_' + value.id + '"/>')
+
+            history_group1.append(input_expense);
+            history_group2.append(input_cost);
+            history_group3.append(input_due_date);
+            history_group4.append(input_type);
+            history_group5.append(label);
+            history_group5.append(update_button);
+            history_group6.append(delete_button);
+
+
+            row_div.append(history_group1);
+            row_div.append(history_group2);
+            row_div.append(history_group3);
+            row_div.append(history_group4);
+            row_div.append(history_group5);
+            row_div.append(history_group6);
             label.append(input_checkbox);
             label.append(span_slider);
-            row_div.append(label);
-            row_div.append(update_button);
-            row_div.append(delete_button);
-            update_button.text('<< Update')
-            delete_button.text('X Delete')
+
+            update_button.text('Update')
+            delete_button.text('Delete')
             history_div.append(row_div);
-            // history_div.append('<br>');
 
 
             $("#delete_" + value.id).click(function (e) {

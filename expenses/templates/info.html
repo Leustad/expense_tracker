@@ -1,24 +1,31 @@
 {% extends '_base.html' %}
 
 {% block title %}
-   | {{ title }}
+| {{ title }}
 {% endblock %}
 
 {% block styles %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signin.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/signin.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="register-div">
-    <h2 class="info-msg"> {{ msg }}</h2>
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            <ul class=flashes>
-            {% for message in messages %}
-              <li>{{ message }}</li>
-            {% endfor %}
-            </ul>
-          {% endif %}
-        {% endwith %}
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Login Form -->
+        <form method="POST">
+            <div id="from-header">
+                <p>Information</p>
+            </div>
+            <h4 class="info-msg"> {{ msg }}</h4>
+            <hr>
+            <div>
+                <a class="underlineHover" href="{{ url_for('main.login') }}">Login</a>
+            </div>
+        </form>
+        <!-- Remind Passowrd -->
+        <div id="form-footer">
+            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

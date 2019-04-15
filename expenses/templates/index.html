@@ -8,48 +8,80 @@
 {% endblock %}
 
 {% block content %}
-<div>
-    <h3>Welcome, {{ name }}</h3>
-    <p>Select Template: <select id="avail_templates"></select></p>
-    <form class="form-horizontal" id="main-form" enctype=multipart/form-data role="form" method="post" action="/">
-        <input type="hidden" name="count" value="1"/>
-        {{ form.csrf_token }}
-        {% for expense_item in form.items %}
-        <div id="all_expense_div">
-            {{ expense_item.expense(placeholder="Expense Name", id="expense_0", value="") }}
-            {{ expense_item.cost(placeholder="Cost", id="cost_0", class="cost", value="") }}
-            {{ expense_item.due_date(id="due_date_0") }}
-            {{ expense_item.desc(id="desc_0") }}
-        </div>
-        {% endfor %}
-        <button id="del_row_0" class="btn btn-secondary delete-row" type="button">-</button>
-        <button class="btn btn-info add-more" type="button">+</button>
-        <br id="br_0">
-        <hr>
-        <button class="submit-expenses" type="submit">Post Expense</button>
-    </form>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6">
+            <h2>Welcome, {{ name }}</h2>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Available Templates
+                </button>
+                <div id="avail_templates" class="dropdown-menu"></div>
+            </div>
+            <hr>
+            <form id="main-form" enctype=multipart/form-data role="form" method="post" action="/">
+                {{ form.csrf_token }}
+                {% for expense_item in form.items %}
+                <div class="form_anchor">
+                    <div class="row" id="row_expense_div_0">
+                        <div class="form-group col-lg-2">
+                            {{ expense_item.expense(placeholder="Expense Name", id="expense_0", class="form-control",
+                            value="") }}
+                        </div>
+                        <div class="form-group col-lg-2">
+                            {{ expense_item.cost(placeholder="Cost", id="cost_0", class="cost", class="form-control",
+                            value="") }}
+                        </div>
+                        <div class="form-group col-lg-3">
+                            {{ expense_item.due_date(id="due_date_0", class="form-control") }}
+                        </div>
+                        <div class="form-group col-lg-2">
+                            {{ expense_item.desc(id="desc_0", class="form-control") }}
+                        </div>
+                        <div class="form-group col-lg-1">
+                            <button id="del_row_0" class="btn btn-outline-danger delete-row" type="button">-</button>
+                        </div>
+                        <div class="form-group col-lg-1">
+                            <button class="btn btn-info add-more" id="add_row_btn" type="button">+</button>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="count" value="1"/>
 
-    <div class="totals">
-        <h3>TOTALS</h3>
-        <table>
-            <tr>
-                <td><strong>Mutual Total</strong></td>
-                <td class="amount mutual"></td>
-            </tr>
-            <tr>
-                <td><strong>Per Person Total</strong></td>
-                <td class="amount perperson"></td>
-            </tr>
-            <tr>
-                <td><strong>Personal</strong></td>
-                <td class="amount personal"></td>
-            </tr>
-        </table>
+                {% endfor %}
+
+                <br id="br_0">
+
+                <button class="btn btn-primary btn-lg" type="submit">Post Expense</button>
+                <hr>
+            </form>
+
+            <div class="totals">
+                <h3>TOTALS</h3>
+                <table class="table table-bordered table-striped table-hover">
+                    <tr>
+                        <td><strong>Mutual Total</strong></td>
+                        <td class="amount mutual"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Per Person Total</strong></td>
+                        <td class="amount perperson"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Personal</strong></td>
+                        <td class="amount personal"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div id="history_graph">
+                <h2 class="text-center">6 Months History Graph</h2>
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
     </div>
-</div>
-<div id="history_graph">
-    <h4>1 Year History Graph</h4>
-    <canvas id="chart"></canvas>
 </div>
 <script>
 let default_fields = {{ default_fields|tojson }};
@@ -57,6 +89,9 @@ let default_template_name = {{ default_template_name|tojson }}
 let all_data = {{ expenses|tojson }};
 let templates = {{ template_names|safe }};
 var ctx = document.getElementById("chart").getContext('2d');
+
+
+
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/graph.js') }}"></script>
