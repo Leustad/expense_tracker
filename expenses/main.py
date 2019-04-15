@@ -67,7 +67,6 @@ def index():
 
 
 @main_blueprint.route('/request_activation', methods=['GET', 'POST'])
-@login_required
 def request_activation():
     form = RequestActivationForm(request.form)
     if request.method == 'POST' and form.validate_on_submit():
@@ -76,7 +75,7 @@ def request_activation():
             flash('Account Already Active. No Need to re-activate')
             return redirect(url_for('main.index'))
         helper.send_activation_email(user)
-        flash(f'Activation Email has been sent to {user.email}. Please don\'t forget to check your spam folder')
+        flash(f'Activation Email has been sent to {user.email}. Please don\'t forget to check your spam folder', 'text-info')
         return render_template('info.html',
                                title='Info',
                                msg='Account Activation has been Requested.'

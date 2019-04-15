@@ -3,6 +3,7 @@ import os
 from functools import wraps
 
 from flask import url_for, session, redirect
+from flask_login import logout_user
 from flask_mail import Message
 
 from expenses import config, mail

@@ -9,33 +9,41 @@
 {% endblock %}
 
 {% block content %}
-<div class="register-div">
-    <form class="form-signin" method="POST" action="">
-        <h2 class="form-signin-heading">Request Activation Email</h2>
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Login Form -->
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+            <div id="from-header">
+                <p>Request Account Activation Email</p>
+            </div>
             {% with messages = get_flashed_messages() %}
-              {% if messages %}
-                <ul class=flashes>
+            {% if messages %}
+            <ul class=flashes>
                 {% for message in messages %}
-                  <li>{{ message }}</li>
+                <span>{{ message }}</span>
                 {% endfor %}
-                </ul>
-              {% endif %}
+            </ul>
+            {% endif %}
             {% endwith %}
-        {{ form.hidden_tag() }}
-        {% if form.email.errors %}
-            {{ form.email(class='form-control') }}
-            <div class="Invalid-feedback">
+
+            {{ form.email(placeholder='Email', class="form-control fadeIn second") }}
+
+            <div>
                 {% for error in form.email.errors %}
-                <span>{{ error }}</span>
+                <span class="text-danger">{{ error }}</span>
                 {% endfor %}
             </div>
-        {% else %}
-            {{ form.email(placeholder='Email', class="form-control") }}
-        {% endif %}
-        <br>
-        <br>
-        {{ form.submit(class="request_activation") }}<br>
-        <p>Back to <a href="{{ url_for('main.login') }}">login</a> page !!</p>
-    </form>
+
+            <input type="submit" class="fadeIn second" value="Request Account Activation">
+            <div>
+                <a class="underlineHover" href="{{ url_for('main.login') }}">Login</a>
+            </div>
+        </form>
+        <!-- Remind Passowrd -->
+        <div id="form-footer">
+            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+        </div>
+    </div>
 </div>
 {% endblock %}

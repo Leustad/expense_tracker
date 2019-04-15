@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    $('.template').addClass('active');
     $("select[name=update_template_name]").change(function(){
         // AJAX: ON Template name Change for Update Template form
         // Query the db to get the template fields.

@@ -1,7 +1,7 @@
 {% extends '_base.html' %}
 
 {% block title %}
-   | Templates
+| Templates
 {% endblock %}
 
 {% block styles %}
@@ -9,39 +9,56 @@
 {% endblock %}
 
 <div class="flashes">
-  {% for message in get_flashed_messages() %}
+    {% for message in get_flashed_messages() %}
     {{ message }}
-  {% endfor %}
+    {% endfor %}
 </div>
 
 {% block content %}
-
-    <div class="create-template">
-      <form method="POST" action="/add_template">
-        <h2>Create a New Template</h2>
-        {{ add_template_form.hidden_tag() }}
-          <label for="add_template_name">*New Template Name:</label>
-        {{ add_template_form.name() }} <br>
-          <label for="add_template_fields">*Expense Items:</label>
-        {{ add_template_form.fields(placeholder='Separate each field name with a ","(comma)', rows=10, cols=70) }}<br>
-        <small class="template-default-div"><label for="add_template_default">Make This Template Default: </label>{{ add_template_form.default }}</small><br>
-        <button class="add-template-btn" type="submit">Create Template</button>
-      </form>
-
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6 py-3">
+        <form method="POST" action="/add_template">
+            {{ add_template_form.hidden_tag() }}
+            <h2>Create a New Template</h2>
+            <div class="form-group">
+                <label for="add_template_fields">New Template Name</label>
+                {{ add_template_form.name(class="form-control", type="text", placeholder="New Template Name") }}
+            </div>
+            <div class="form-group">
+                <label for="add_template_default">Template Fields</label>
+                {{ add_template_form.fields(class="form-control", placeholder='Separate each field name with a ","(comma)') }}
+            </div>
+            <div class="form-group">
+                <label class="col-form-label" for="add_template_default">Make This Default: </label>
+                {{ add_template_form.default(class="from-control") }}
+            </div>
+            <button class="btn btn-primary" type="submit">Create Template</button>
+        </form>
     </div>
-
-    <div class="update-template">
+    <div class="col-lg-6 py-3">
         <form method="POST" action="/update_template">
-            <h2>Update Existing Templates</h2>
-            {{ update_template_form.hidden_tag() }}
-            <label for="update_template_name">Existing Templates:</label>
-            {{ update_template_form.name(placeholder='Template Name') }}<br>
-            <label for="update_template_fields">*Expense Items:</label>
-            {{ update_template_form.fields(placeholder='Fields Names', rows=10, cols=70) }}<br>
-            <small class="template-default-div"><label for="update_template_default">Make This Template Default: </label>{{ update_template_form.default }} </small><br>
-            <button class="update-template-btn" type="submit">Update Template</button>
-          </form>
+        <h2>Update Existing Templates</h2>
+        {{ update_template_form.hidden_tag() }}
+            <div class="form-group">
+                <label for="update_template_name">New Template Name</label>
+                {{ update_template_form.name(class="form-control", placeholder='Template Name') }}
+            </div>
+            <div class="form-group">
+                <label for="update_template_fields">Template Fields</label>
+                {{ update_template_form.fields(class="form-control", placeholder='Fields Names') }}
+            </div>
+            <div class="form-group">
+                <label class="col-form-label" for="update_template_default">Make This Default: </label>
+                {{ update_template_form.default(class="from-control") }}
+            </div>
+            <button class="btn btn-primary" type="submit">Update Template</button>
+        </form>
     </div>
+    </div>
+
+</div>
+
 {% endblock %}
 
 {% block endscript %}
