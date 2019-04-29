@@ -2,11 +2,11 @@ import datetime
 import os
 from functools import wraps
 
-from flask import url_for, session, redirect
-from flask_login import logout_user
+from flask import url_for, session, redirect, request
 from flask_mail import Message
 
-from expenses import config, mail
+from expenses import config, mail, db
+from expenses.forms import AddTemplateFrom, UpdateTemplateFrom
 
 
 def get_data(db, table, session, to_date,
@@ -41,11 +41,6 @@ def generate_graph_data(data):
                                                           'expense_type': i.expense_type
                                                           })
     return graph_data
-
-
-def get_region_class():
-    region_config = config.os.environ['APP_SETTINGS'].split('.')[2]
-    return getattr(config, region_config)
 
 
 def is_user_active(user):
@@ -87,7 +82,7 @@ From Expense-Pro Team with Love <3
     mail.send(msg)
 
 
-from expenses.models import User
+from expenses.models import User, Template
 
 
 def active_required(func):
@@ -99,3 +94,49 @@ def active_required(func):
 
         return func(*args, **kwargs)
     return inner
+
+
+def get_user_id():
+    return User.query.filter_by(id=session['user_id']).first().id
+
+
+def ready_update_template_form(update_template_form, update_fields):
+    def _templates():
+        return Template.query.filter_by(user_id=session['user_id']).all()
+
+    update_template_form.name.choices = [
+        (i.name, i.name) for i in _templates()]
+
+    if update_fields:
+        template_list = [i.template for i in _templates() if i.name == _templates()[0].name]
+        template_list = ', '.join(map(str, template_list))
+        update_template_form.fields.data = template_list
+
+
+def get_forms(update_fields):
+    add_template_form = AddTemplateFrom(request.form, prefix='add_template_')
+    update_template_form = UpdateTemplateFrom(request.form, prefix='update_template_')
+    ready_update_template_form(update_template_form, update_fields)
+    return add_template_form, update_template_form
+
+
+def deselect_default():
+    """ User wants this template to be default, so find the one is already "default" and
+        make it NOT default """
+    try:
+        template_row = Template.query.filter_by(user_id=session['user_id'],
+                                                default=True).first()
+        template_row.default = False
+        db.session.commit()
+    except Exception as e:
+        print(e)
+
+
+def redirect_dest(fallback):
+    dest = request.args.get('next')
+    try:
+        dest_url = url_for(dest)
+    except:
+        return redirect(fallback)
+    return redirect(dest_url)
+

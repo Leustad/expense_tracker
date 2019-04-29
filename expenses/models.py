@@ -1,13 +1,17 @@
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
-from expenses import db, ma
-from expenses.helpers import helper
+from expenses import db, ma, config
 
 from flask_login import UserMixin
 
 
+def get_region_class():
+    region_config = config.os.environ['APP_SETTINGS'].split('.')[2]
+    return getattr(config, region_config)
+
+
 class Schema(object):
-    schema_name = helper.get_region_class().SCHEMA
+    schema_name = get_region_class().SCHEMA
 
 
 class User(UserMixin, db.Model):
@@ -25,12 +29,12 @@ class User(UserMixin, db.Model):
     expense = db.relationship('Expense', backref='user')
 
     def get_token(self, salt, expires_sec=1800):
-        s = Serializer(helper.get_region_class().SECRET_KEY, expires_sec)
+        s = Serializer(get_region_class().SECRET_KEY, expires_sec)
         return s.dumps({'user_id': self.id}, salt=f'{salt}').decode('utf-8')
 
     @staticmethod
     def verify_token(token, salt):
-        s = Serializer(helper.get_region_class().SECRET_KEY)
+        s = Serializer(get_region_class().SECRET_KEY)
         try:
             user_id = s.loads(token, salt=f'{salt}')['user_id']
         except:
