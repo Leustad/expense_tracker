@@ -17,15 +17,7 @@
                 <p>Login</p>
             </div>
             {{ form.hidden_tag() }}
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                <span class="text-danger">{{ message }}</span>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
+
             {{ form.email(placeholder='email', class="fadeIn first") }}
             {{ form.password(placeholder='password', class="fadeIn second") }}
             <div class="remember-me fadeIn third">

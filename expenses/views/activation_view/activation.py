@@ -19,7 +19,7 @@ def request_activation():
             flash('Account Already Active. No Need to re-activate')
             return redirect(url_for('main.index'))
         send_activation_email(user)
-        flash(f'Activation Email has been sent to {user.email}. Please don\'t forget to check your spam folder', 'text-info')
+        flash(f'Activation Email has been sent to {user.email}. Please don\'t forget to check your spam folder', 'info')
         return render_template('info.html',
                                title='Info',
                                msg='Account Activation has been Requested.'

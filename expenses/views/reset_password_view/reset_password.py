@@ -30,13 +30,13 @@ def reset_token(token):
     user = User.verify_token(token, salt='password-reset-token')
 
     if user is None:
-        flash('That is an invalid or expired token', 'warning')
+        flash('That is an invalid or expired token', 'danger')
         return redirect(url_for('reset_password.reset_request'))
     form = ResetPasswordFrom()
     if form.validate_on_submit():
         hashed_psw = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
         user.password = hashed_psw
         db.session.commit()
-        flash('Your password has been updated !! You are now able to login with your new password.')
+        flash('Your password has been updated !! You are now able to login with your new password.', 'success')
         return redirect(url_for('login.login'))
     return render_template('reset_token.html', title='Reset Password', form=form)
