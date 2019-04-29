@@ -22,13 +22,13 @@
             {{ form.password(placeholder='password', class="fadeIn third") }}
             <input type="submit" class="fadeIn fourth" value="Register">
             <div>
-                <a class="underlineHover" href="{{ url_for('main.login') }}">Back to Login</a>
+                <a class="underlineHover" href="{{ url_for('login.login') }}">Back to Login</a>
             </div>
 
         </form>
         <!-- Remind Passowrd -->
         <div id="form-footer">
-            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+            <a class="underlineHover" href="{{ url_for('reset_password.reset_request') }}">Forgot Password ?</a>
         </div>
     </div>
 </div>

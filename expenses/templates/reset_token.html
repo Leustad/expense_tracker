@@ -49,7 +49,7 @@
         <div class="form-group">
             {{ form.submit(class="btn btn-outline-info reset-password") }}
         </div>
-        <p>Back to <a href="{{ url_for('main.login') }}">login</a> page !!</p>
+        <p>Back to <a href="{{ url_for('login.login') }}">login</a> page !!</p>
     </form>
 </div>
 
@@ -83,12 +83,12 @@
 
             <input type="submit" class="fadeIn second" value="Reset Password">
             <div>
-                <a class="underlineHover" href="{{ url_for('main.register') }}">Register</a>
+                <a class="underlineHover" href="{{ url_for('register.register') }}">Register</a>
             </div>
         </form>
         <!-- Remind Passowrd -->
         <div id="form-footer">
-            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+            <a class="underlineHover" href="{{ url_for('activation.reset_request') }}">Forgot Password ?</a>
         </div>
     </div>
 </div>
