@@ -4,10 +4,8 @@ from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_login import LoginManager
 from flask_mail import Mail
-# from flask_admin import Admin
-# from flask_admin.contrib.sqla import ModelView
 
 
 app = Flask(__name__)
@@ -20,19 +18,20 @@ ma = Marshmallow(app)
 mail = Mail(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'main.login'
+login_manager.login_view = 'views.main_view.main.login'
 
+from expenses.views.activation_view.activation import activation_blueprint
+from expenses.views.history_view.history import history_blueprint
+from expenses.views.template_view.template import template_blueprint
+from expenses.views.login_view.login import login_blueprint
+from expenses.views.main_view.main import main_blueprint
+from expenses.views.register_view.register import register_blueprint
+from expenses.views.reset_password_view.reset_password import reset_password_blueprint
 
-# from pigeon.models import User, MessageBoard
-# from pigeon.admin.view import AdminView, AdminMessageBoard
-
-# admin = Admin(app, name='Dashboard', index_view=AdminView(User, db.session, url='/admin', endpoint='admin'))
-# admin.add_view(ModelView(User, db.session))
-# admin.add_view(AdminMessageBoard(MessageBoard, db.session, url='/admin/messageboard/'))
-
-from expenses.main import main_blueprint
-# from pigeon.admin.view import my_admin_blueprint
+app.register_blueprint(activation_blueprint)
+app.register_blueprint(history_blueprint)
+app.register_blueprint(template_blueprint)
+app.register_blueprint(login_blueprint)
 app.register_blueprint(main_blueprint)
-# app.register_blueprint(my_admin_blueprint)
-
-# from expenses.apis import api
+app.register_blueprint(register_blueprint)
+app.register_blueprint(reset_password_blueprint)

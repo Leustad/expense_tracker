@@ -214,10 +214,13 @@ $(document).ready(function(){
 
     // Delete Selected Row and Re-index Fields
     $('form').on('click', '.delete-row', function(){
+        let clone_add_row = $('#add_row_btn').clone(true, true);
+        $('#add_row_btn').remove();
         if($("[id^=del_row]").length > 1){
             delete_rows($(this).attr('id').split("_")[2]);
             update_fields();
         }
+        clone_add_row.appendTo($('.col-lg-2').last());
     });
 
     // Re-index All Fields

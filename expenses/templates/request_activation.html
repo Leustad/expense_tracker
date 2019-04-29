@@ -17,15 +17,6 @@
             <div id="from-header">
                 <p>Request Account Activation Email</p>
             </div>
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                <span>{{ message }}</span>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
 
             {{ form.email(placeholder='Email', class="form-control fadeIn second") }}
 
@@ -37,12 +28,12 @@
 
             <input type="submit" class="fadeIn second" value="Request Account Activation">
             <div>
-                <a class="underlineHover" href="{{ url_for('main.login') }}">Login</a>
+                <a class="underlineHover" href="{{ url_for('login.login') }}">Login</a>
             </div>
         </form>
         <!-- Remind Passowrd -->
         <div id="form-footer">
-            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+            <a class="underlineHover" href="{{ url_for('reset_password.reset_request') }}">Forgot Password ?</a>
         </div>
     </div>
 </div>

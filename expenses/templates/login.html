@@ -17,15 +17,7 @@
                 <p>Login</p>
             </div>
             {{ form.hidden_tag() }}
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                <span class="text-danger">{{ message }}</span>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
+
             {{ form.email(placeholder='email', class="fadeIn first") }}
             {{ form.password(placeholder='password', class="fadeIn second") }}
             <div class="remember-me fadeIn third">
@@ -34,12 +26,12 @@
             </div>
             <input type="submit" class="fadeIn fourth" value="Log In">
             <div>
-                <a class="underlineHover" href="{{ url_for('main.register') }}">Register</a>
+                <a class="underlineHover" href="{{ url_for('register.register') }}">Register</a>
             </div>
         </form>
         <!-- Remind Passowrd -->
         <div id="form-footer">
-            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+            <a class="underlineHover" href="{{ url_for('reset_password.reset_request') }}">Forgot Password ?</a>
         </div>
     </div>
 </div>

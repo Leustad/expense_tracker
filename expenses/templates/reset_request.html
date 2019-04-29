@@ -16,15 +16,6 @@
             <div id="from-header">
                 <p>Password Reset Request</p>
             </div>
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
 
             {{ form.email(placeholder='Email', class="form-control fadeIn second") }}
 
@@ -36,12 +27,12 @@
 
             <input type="submit" class="fadeIn third" value="Reset Password">
             <div>
-                <a class="underlineHover" href="{{ url_for('main.register') }}">Register</a>
+                <a class="underlineHover" href="{{ url_for('register.register') }}">Register</a>
             </div>
         </form>
         <!-- Remind Passowrd -->
         <div id="form-footer">
-            <a class="underlineHover" href="{{ url_for('main.reset_request') }}">Forgot Password ?</a>
+            <a class="underlineHover" href="{{ url_for('reset_password.reset_request') }}">Forgot Password ?</a>
         </div>
     </div>
 </div>
