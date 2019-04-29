@@ -17,15 +17,6 @@
             <div id="from-header">
                 <p>Request Account Activation Email</p>
             </div>
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                <span>{{ message }}</span>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
 
             {{ form.email(placeholder='Email', class="form-control fadeIn second") }}
 

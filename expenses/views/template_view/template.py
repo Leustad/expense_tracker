@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, session, url_for, jsonify
+from flask import Blueprint, render_template, request, session, url_for, jsonify, flash
 from flask_login import login_required
 from werkzeug.utils import redirect
 
@@ -41,6 +41,7 @@ def add_template():
                                     )
             db.session.add(new_template)
             db.session.commit()
+            flash('New Template Added', 'success')
             return redirect(url_for('template.template'))
     return render_template('template.html',
                            add_template_form=add_template_form,
@@ -66,10 +67,8 @@ def update_template():
 
         # db.session.add(template_row)
         db.session.commit()
+        flash('Template Updated', 'success')
         return redirect(url_for('template.template'))
-    for fieldName, errorMessages in update_template_form.errors.items():
-        for err in errorMessages:
-            print(err)
     return render_template('template.html',
                            add_template_form=add_template_form,
                            update_template_form=update_template_form)

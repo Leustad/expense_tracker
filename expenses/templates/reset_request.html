@@ -16,15 +16,6 @@
             <div id="from-header">
                 <p>Password Reset Request</p>
             </div>
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
 
             {{ form.email(placeholder='Email', class="form-control fadeIn second") }}
 

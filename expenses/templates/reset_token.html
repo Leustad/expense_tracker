@@ -12,15 +12,7 @@
 <div class="register-div">
     <form class="form-signin" method="POST" action="">
         <h2 class="form-signin-heading">Reset Password</h2>
-        {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
+
         {{ form.hidden_tag() }}
         <div class="form-group">
             {% if form.password.errors %}
@@ -62,15 +54,6 @@
             <div id="from-header">
                 <p>New Password</p>
             </div>
-            {% with messages = get_flashed_messages() %}
-            {% if messages %}
-            <ul class=flashes>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-            {% endif %}
-            {% endwith %}
 
             {{ form.password(placeholder='password', class="form-control fadeIn first") }}
             {{ form.confirm_password(placeholder='confirm password', class="form-control fadeIn second") }}

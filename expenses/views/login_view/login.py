@@ -26,13 +26,14 @@ def login():
             db.session.commit()
             return redirect_dest(fallback=url_for('main.index'))
 
-        flash('Invalid/Wrong Credentials. Please try again.')
+        flash('Invalid/Wrong Credentials. Please try again.', category='warning')
     return render_template('login.html', form=form)
 
 
 @login_blueprint.route('/logout', methods=['GET'])
 @login_required
 def logout():
+    flash(f'Goodbye {current_user.username}', 'primary')
     logout_user()
     return redirect(url_for('login.login'))
 

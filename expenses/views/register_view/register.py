@@ -19,6 +19,6 @@ def register():
                         )
         db.session.add(new_user)
         db.session.commit()
-        flash('Please check your email for an activation link', 'info')
+        flash('Please check your email for account activation link', 'info')
         return redirect(url_for('main.index'))
     return render_template('register.html', form=form)
