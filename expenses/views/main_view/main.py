@@ -34,7 +34,7 @@ def index():
                 db.session.add(entry)
                 db.session.commit()
         return redirect(url_for('main.index'))
-    yty_data = {}
+    
     six_months = get_data(db, Expense, session, today)
 
     yty_data = dict([(i.due_date.strftime('%Y%m%d'), []) for i in six_months])
