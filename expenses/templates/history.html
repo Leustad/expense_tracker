@@ -24,7 +24,8 @@
 
 </div>
 <hr>
-<div class="container-fluid">
+<h3 class="no_data text-muted text-center" style="display:none;">{% include 'helper/_no_data.html' %}</h3>
+<div class="container-fluid all-history">
     <div class="row">
         <div class="col-lg-6">
             <div id="history_data">
@@ -48,15 +49,18 @@
     var hist_data = ({{ data|safe }});
     var all_data = ({{  graph_yty_data|safe }});
     var ctx = document.getElementById("chart").getContext('2d');
-
-
-
-
-
-
 </script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/history.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/graph.js') }}"></script>
-<script>draw_hist_graph(all_data);</script>
+<script>
+    if ($.isEmptyObject(all_data)){
+        $('.all-history').css("visibility",  "hidden");
+        $('.no_data').css("display",  "inline");
+    }else{
+        $('.all-history').css("visibility", "visible");
+        $('.no_data').css("display", "none");
+        draw_hist_graph(all_data);
+    }
+</script>
 {% endblock %}
