@@ -1,0 +1,30 @@
+{% extends "_base.html" %}
+{% block links %}
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css'
+      integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ'
+      crossorigin='anonymous'>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="col-lg-12 py-3 text-center">
+
+        <img alt="404 page not found"
+             src="{{ url_for('static', filename='img/404-error.svg') }}" style="width:128px;height:128px;">
+        <h1>404</h1>
+        <p>Aww, looks like you ended up at an unknown territory :(</p>
+        <p>Let's go back to somewhere safe...</p>
+        <p><a href="{{url_for('login.login')}}">Go back home</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block icon_ref %}
+<div class="icon-ref">Icons made by <a href="https://www.freepik.com/"
+                              title="Freepik">Freepik</a> from
+            <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by
+            <a href="http://creativecommons.org/licenses/by/3.0/"
+               title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
+        </div>
+{% endblock %}
+

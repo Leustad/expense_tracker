@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 from flask_bcrypt import Bcrypt
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -35,3 +35,13 @@ app.register_blueprint(login_blueprint)
 app.register_blueprint(main_blueprint)
 app.register_blueprint(register_blueprint)
 app.register_blueprint(reset_password_blueprint)
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('error/404.html'), 404
+
+
+@app.errorhandler(500)
+def not_found(error):
+    return render_template('error/500.html'), 500

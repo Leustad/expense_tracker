@@ -1,0 +1,18 @@
+{% extends "_base.html" %}
+{%block links %}
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.7.0/css/all.css'
+      integrity='sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ'
+      crossorigin='anonymous'>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="col-lg-12 py-3 text-center">
+        <i class="fas fa-skull-crossbones" style='font-size:48px;'></i>
+        <h1>500</h1>
+        <p>Aww, Looks like you broke the internet.</p>
+        <p>Let's go back to somewhere safe...</p>
+        <p><a href="{{url_for('login.login')}}">Go back home</a></p>
+    </div>
+</div>
+{% endblock %}
