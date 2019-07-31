@@ -162,6 +162,7 @@ $(document).ready(function () {
                 populate_history(result.hist_data);
                 data_to_draw_with = result.graph_yty_data;
                 draw_hist_graph(result.graph_yty_data);
+                edit_totals(get_totals());
             },
             error: function (result) {
                 console.log('Server error !! Can\'t get the history data');
@@ -229,5 +230,40 @@ $(document).ready(function () {
             }
         });
     };
+
+
+    edit_totals(get_totals());
+
+    function edit_totals(total){
+        const mutual = $('.mutual');
+        const perperson = $('.perperson');
+        const personal = $('.personal');
+
+        mutual.text("$ " + total[1].toFixed(2));
+        perperson.text("$ " + (total[1]/2).toFixed(2));
+        personal.text("$ " + total[0]);
+    }
+
+    function get_totals(){
+        let expenses = [];
+        var personal = 0.0;
+        var mutual = 0.0;
+        $("[id^=cost_]").each(function(){
+            row_num = this.id.split("_")[1];
+            desc = $("#type_" + row_num).val();
+
+            var val = $(this).val();
+            var amount = parseFloat(val);
+
+            if (desc == "Personal"){
+                personal += amount;
+            }
+            else if (desc == "Mutual"){
+                mutual += amount;
+            }
+       })
+       expenses.push(personal, mutual);
+       return expenses
+    }
 
 });

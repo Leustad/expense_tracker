@@ -169,7 +169,7 @@ $(document).ready(function(){
             edit_totals(get_totals());
         });
         $(".cost").focusout(function() {
-            edit_totals(get_totals());
+            edit_totals(get_totals());amount mutual
         })
     });
 
