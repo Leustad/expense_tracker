@@ -178,9 +178,9 @@ $(document).ready(function(){
         const perperson = $('.perperson');
         const personal = $('.personal');
 
-        mutual.text("$ " + total[1]);
+        mutual.text("$ " + total[1].toFixed(2));
         perperson.text("$ " + (total[1]/2).toFixed(2));
-        personal.text("$ " + total[0]);
+        personal.text("$ " + total[0].toFixed(2));
     }
     function get_totals(){
         let expenses = [];
