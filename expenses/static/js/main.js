@@ -203,7 +203,7 @@ $(document).ready(function(){
                 mutual += value;
             }
        })
-       expenses.push(personal.toFixed(2), mutual.toFixed(2));
+       expenses.push(personal, mutual);
        return expenses
     }
     $("select[id^=desc_]").change(function(){
