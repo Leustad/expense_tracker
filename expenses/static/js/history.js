@@ -189,6 +189,8 @@ $(document).ready(function () {
                 $('#hist_row_' + update_data['update_id']).animate({backgroundColor: '#2196F3'}, 'slow');
                 $('#hist_row_' + update_data['update_id']).animate({backgroundColor: 'white'}, 'slow');
 
+                edit_totals(get_totals());
+
                 setTimeout(function() {
                     clear_rows();
                     populate_history(result.hist_data);
@@ -238,10 +240,12 @@ $(document).ready(function () {
         const mutual = $('.mutual');
         const perperson = $('.perperson');
         const personal = $('.personal');
+        const g_total = $('.g_total');
 
         mutual.text("$ " + total[1].toFixed(2));
         perperson.text("$ " + (total[1]/2).toFixed(2));
         personal.text("$ " + total[0].toFixed(2));
+        g_total.text("$ " + (total[1] + total[0]).toFixed(2));
     }
 
     function get_totals(){

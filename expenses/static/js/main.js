@@ -163,10 +163,12 @@ $(document).ready(function(){
         const mutual = $('.mutual');
         const perperson = $('.perperson');
         const personal = $('.personal');
+        const g_total = $('.g_total');
 
         mutual.text("$ " + total[1].toFixed(2));
         perperson.text("$ " + (total[1]/2).toFixed(2));
         personal.text("$ " + total[0].toFixed(2));
+        g_total.text("$ " + (total[1] + total[0]).toFixed(2));
     }
     function get_totals(){
         let expenses = [];
