@@ -10,12 +10,19 @@ from expenses.forms import AddTemplateFrom, UpdateTemplateFrom
 
 
 def get_data(db, table, session, to_date,
-             from_date=(datetime.datetime.now() - datetime.timedelta(days=184)).replace(day=1)):
+             from_date=(datetime.datetime.now() - datetime.timedelta(days=184)).replace(day=1),
+             names=None):
+
     data = db.session.query(table).filter(table.due_date >= from_date,
                                           table.due_date <= to_date,
-                                          table.user_id == session['user_id']
+                                          table.user_id == session['user_id'],
+                                          table.expense.in_(names) if names is not None else ''
                                           ).order_by(table.due_date.desc()).all()
     return data
+
+
+def suggest_expense_names(db, table, session):
+    return db.session.query(table.expense).filter(table.user_id == session['user_id']).distinct()
 
 
 def generate_hist_data(data):

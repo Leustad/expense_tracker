@@ -4,6 +4,7 @@ $(document).ready(function () {
     var fields = ['expense', 'cost', 'due_date', 'type'];
     var history_div = $("#history_data");
     var data_to_draw_with = all_data;
+    suggest_names();
 
     let default_graph_type = $("input[name='graph_type']:checked").val();
 
@@ -155,7 +156,8 @@ $(document).ready(function () {
             contentType: 'application/json;charset=UTF-8',
             data: JSON.stringify({
                 'to_date': $('#to_date').val(),
-                'from_date': $('#from_date').val()
+                'from_date': $('#from_date').val(),
+                'expense_name': $('#name_search').val()
             }),
             success: function (result) {
                 clear_rows();
@@ -268,6 +270,44 @@ $(document).ready(function () {
        })
        expenses.push(personal, mutual);
        return expenses
+    };
+
+// *** Expense Name Autocomplete *** //
+    function split( val ) {
+      return val.split( /,\s*/ );
+    };
+    function extractLast( term ) {
+      return split( term ).pop();
+    };
+
+    function suggest_names(){
+        var available_names = names;
+
+        $('#name_search').autocomplete({
+            minLength: 0,
+            autoFocus:true,
+            source: function( request, response ) {
+                response($.ui.autocomplete.filter(
+                    available_names, extractLast(request.term)
+                    )
+                );
+            },
+            focus: function() {
+                return false;
+            },
+            select: function( event, ui ) {
+                var terms = split( this.value );
+                // remove the current input
+                terms.pop();
+                // add the selected item
+                terms.push( ui.item.value );
+                // add placeholder to get the comma-and-space at the end
+                terms.push( "" );
+                this.value = terms.join( ", " );
+                return false;
+            }
+        });
     }
+// *** === *** //
 
 });
