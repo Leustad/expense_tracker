@@ -4,6 +4,7 @@ from functools import wraps
 
 from flask import url_for, session, redirect, request
 from flask_mail import Message
+from sqlalchemy import text
 
 from expenses import config, mail, db
 from expenses.forms import AddTemplateFrom, UpdateTemplateFrom
@@ -16,7 +17,7 @@ def get_data(db, table, session, to_date,
     data = db.session.query(table).filter(table.due_date >= from_date,
                                           table.due_date <= to_date,
                                           table.user_id == session['user_id'],
-                                          table.expense.in_(names) if names is not None else ''
+                                          table.expense.in_(names) if names is not None else text('')
                                           ).order_by(table.due_date.desc()).all()
     return data
 
