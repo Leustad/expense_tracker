@@ -1,10 +1,12 @@
 import datetime
+import json
 
 from flask import Blueprint, session, render_template, request, jsonify
 from flask_login import login_required
 
 from expenses import db
-from expenses.helpers.helper import active_required, get_data, generate_hist_data, generate_graph_data
+from expenses.helpers.helper import (active_required, get_data, generate_hist_data, generate_graph_data,
+                                     suggest_expense_names)
 from expenses.models import Expense
 
 history_blueprint = Blueprint('history', __name__)
@@ -17,6 +19,7 @@ def history():
     yty_data = []
     today = datetime.datetime.now()
     six_months = get_data(db, Expense, session, today)
+    names = suggest_expense_names(db, Expense, session)
 
     for i in six_months:
         yty_data.append({'id': i.id,
@@ -38,7 +41,8 @@ def history():
     return render_template('history.html', data=yty_data,
                            graph_yty_data=graph_yty_data,
                            from_date=from_date,
-                           to_date=today)
+                           to_date=today,
+                           names=json.dumps([i.expense for i in names]))
 
 
 @history_blueprint.route('/get_history', methods=['POST'])
@@ -48,9 +52,13 @@ def get_history():
     if request.method == 'POST':
         to_date = request.json['to_date']
         from_date = request.json['from_date']
-        hist_data = []
+        names = request.json['expense_name'] or None
+        try:
+            names = list(names.replace(', ', ',').rstrip(',').split(','))
+        except AttributeError as e:
+            names = None
 
-        data = get_data(db, Expense, session, to_date, from_date)
+        data = get_data(db, Expense, session, to_date, from_date, names)
         hist_data = generate_hist_data(data)
         graph_data = generate_graph_data(data)
 

@@ -5,13 +5,7 @@ $(document).ready(function(){
     const fields = ['expense', 'cost', 'due_date', 'desc'];
     const form_anchor = $('.form_anchor');
 
-//    $(".col-lg-2").each(function(){
-//        $(this).remove();
-//    });
-//    $('.form-row').removeClass("form-row align-items-center");
-
     function add_row(v, next){
-//        const expense_row = $('<div id="row_expense_div_' + next + '"/>')
 
         let form_row = $('<div class="row" id=row_expense_div_' + next + '/>');
         let form_group1 = $('<div class="form-group col-lg-2"/>');
@@ -54,7 +48,6 @@ $(document).ready(function(){
         form_row.append(form_group6);
         form_anchor.append(form_row);
 
-//        expense_row.append(form_row);
         input_type.text("Mutual");
 
 
@@ -71,12 +64,7 @@ $(document).ready(function(){
     }
 
     // Default_fields
-    if (default_fields){       
-        // remove the existing row
-//        $("[id^=cost]").remove();
-//        $("[id^=expense]").remove();
-//        $("[id^=due_date]").remove();
-//        $("[id^=desc]").remove();
+    if (default_fields){
         $('.form_anchor div.row').remove();
 
         // Add rows per default fields
@@ -85,10 +73,8 @@ $(document).ready(function(){
             add_row(v, next);
             next += 1;
         });
-//        $("[id^=del_row_]").last().remove();
         $('.add-more').remove();
         $('.col-lg-2').last().append($('<button id="add_row_btn" class="btn btn-primary add-more" type="button">+</button>'));
-//        $("[id^=row_expense_div_]").last().append();
         update_fields();
     }
 
@@ -177,10 +163,12 @@ $(document).ready(function(){
         const mutual = $('.mutual');
         const perperson = $('.perperson');
         const personal = $('.personal');
+        const g_total = $('.g_total');
 
         mutual.text("$ " + total[1].toFixed(2));
         perperson.text("$ " + (total[1]/2).toFixed(2));
         personal.text("$ " + total[0].toFixed(2));
+        g_total.text("$ " + (total[1] + total[0]).toFixed(2));
     }
     function get_totals(){
         let expenses = [];
@@ -203,7 +191,7 @@ $(document).ready(function(){
                 mutual += value;
             }
        })
-       expenses.push(personal.toFixed(2), mutual.toFixed(2));
+       expenses.push(personal, mutual);
        return expenses
     }
     $("select[id^=desc_]").change(function(){
@@ -230,15 +218,11 @@ $(document).ready(function(){
             let ctr = 0;
             $("[id^=" + value + "]").each(function(index, el){
                 $(this).attr('id', value + '_' + ctr);
-               // $(this).off('focusout');
-               // $(this).on('focusout', function(e){})
                 ctr += 1;
             });
         });
         update_del_btn();
         edit_totals(get_totals());
-        /*$('select').off('change');
-        $('select').on('change', function(e){});*/
     }
 
     function update_del_btn(){
