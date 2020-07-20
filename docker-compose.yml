@@ -1,0 +1,38 @@
+version: '3.2'
+
+services:
+  web:
+    build: .
+    depends_on:
+      - db
+    environment:
+      APP_SETTINGS: "expenses.config.DevelopmentConfig"
+      DB_PASS_DEV: "password"
+      DATABASE_URL: "postgres://wojhkgcclswuni:22fd79c72b5bf99e8262936f655729d5a33fcd74c6ce7c59c4ed7be3597847a1@ec2-107-20-176-7.compute-1.amazonaws.com:5432/dfc93l56vn7kv6"
+      EMAIL_USERNAME: "expenseprofessional@gmail.com"
+      EMAIL_PASSWORD: "wbxsscvrkfmcswxm"
+    networks:
+      - default
+    ports:
+      - 5000:5000
+    volumes:
+      - ./app:/usr/src/app/app
+      - ./migrations:/usr/src/app/migrations
+    restart: always
+
+  db:
+    image: postgres
+    container_name: db
+    restart: always
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - 5455:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      PGDATA: /tmp
+
+volumes:
+  db-data:
+    driver: local

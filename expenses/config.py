@@ -29,7 +29,7 @@ class DevelopmentConfig(Config):
     ENV = 'development'
     DEVELOPMENT = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = f'postgresql://postgres:{Config.PSW}@192.168.1.2/expenses'
+    SQLALCHEMY_DATABASE_URI = f'postgresql://app_user:{Config.PSW}@127.0.0.1:5455/expenses'
     SCHEMA = 'leustad'
     MAIL_DEBUG = True
     MAIL_SUPPRESS_SEND = False

@@ -1,0 +1,9 @@
+CREATE DATABASE expenses;
+
+CREATE USER app_user WITH PASSWORD 'password';
+
+\connect expenses;
+
+CREATE SCHEMA IF NOT EXISTS leustad AUTHORIZATION app_user;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA leustad GRANT ALL PRIVILEGES ON TABLES TO app_user;
